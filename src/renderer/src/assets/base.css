@@ -1,0 +1,160 @@
+/* ================================
+   THEME: LIGHT MODE
+=================================== */
+:root {
+  /* Cores principais */
+  --success-bg: #d4edda;    /* fundo success */
+  --success-text: #155724;  /* texto success */
+
+  --error-bg: #f8d7da;      /* fundo error */
+  --error-text: #e50014;    /* texto error */
+    --error-bg: #842029;
+
+  --warning-bg: #fff3cd;    /* fundo warning */
+  --warning-text: #856404;  /* texto warning */
+
+  --info-bg: #d1ecf1;       /* fundo info */
+  --info-text: #0c5460;     /* texto info */
+  --background: #f0f2f5;      /* fundo geral */
+  --card: #ffffff;            /* painéis / caixas */
+  --border: #d0d0d0;          /* bordas */
+  --shadow: rgba(0, 0, 0, 0.08);
+
+  /* Texto */
+  --text: #1b1b1b;            /* texto principal */
+  --text2: #5f5f5f;           /* texto secundário */
+  --color-button:#ffff;
+
+  /* Links */
+  --links: #0a58d0;
+
+  /* Botões */
+  --button: #dcdcdc;
+  --button-hover: #cfcfcf;
+  --button-active: #bababa;
+
+  /* Botão destaque */
+  --primary: #0b64d9;
+  --primary-hover: #0953b6;
+
+  /* Campos */
+  --input: #eef7ff9d;
+  --input-border: #bfbfbf;
+  --input-focus: #0b64d9;
+
+  /* Raio */
+  --radius: 5px;
+}
+
+/* ================================
+   THEME: DARK MODE
+=================================== */
+.dark {
+  --background: #1f1f1f;
+  --card: #2a2a2a;
+  --border: #3f3f3f;
+  --shadow: rgba(0, 0, 0, 0.4);
+
+  --text: #f5f5f5;
+  --text2: #cfcfcf;
+
+  --links: #4da3ff;
+
+  --button: #3a3a3a;
+  --button-hover: #4a4a4a;
+  --button-active: #555;
+
+  --primary: #1e7eff;
+  --primary-hover: #1566d6;
+
+  --input: #313131;
+  --input-border: #555;
+  --input-focus: #1e7eff;
+
+  --success-bg: #155724;
+  --success-text: #d4edda;
+
+  --error-bg: #842029;
+  --error-text: #f8d7da;
+
+  --warning-bg: #856404;
+  --warning-text: #fff3cd;
+
+  --info-bg: #0c5460;
+  --info-text: #d1ecf1;
+  --radius: 5px;
+}
+
+/* ================================
+   RESET
+=================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--text);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ================================
+   COMPONENTES
+=================================== */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 1px 3px var(--shadow);
+}
+
+button {
+  background: var(--button);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+button:hover {
+  background: var(--button-hover);
+}
+
+button:active {
+  background: var(--button-active);
+}
+
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+input,select {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--input-border);
+  background: var(--input);
+  border-radius: var(--radius);
+}
+
+input:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 2px rgba(20, 110, 220, 0.25);
+}
+
+a {
+  color: var(--links);
+  text-decoration: none;
+}

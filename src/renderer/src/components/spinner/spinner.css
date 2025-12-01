@@ -1,0 +1,8 @@
+.miniSpinner{
+  border: 3px solid var(--border);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border-top: 3px solid var(--primary);
+  animation: spin .3s linear infinite;
+}

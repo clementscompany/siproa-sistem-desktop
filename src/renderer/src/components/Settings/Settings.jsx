@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./settings.css";
 import Alert from "../Alert/Alert";
 import { systemApi } from "../../api/System.api";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
   const [step, setStep] = useState(1);
@@ -9,6 +10,7 @@ export default function Settings() {
   const [errors, setErrors] = useState({});
   const [alertMessage, setAlertMessage] = useState({ open: false, message: "", status: "", title: "" })
   const Api = new systemApi();
+  const nav = useNavigate();
   const nextStep = () => {
     if (validateStep()) setStep((prev) => prev + 1);
   };
@@ -60,7 +62,14 @@ export default function Settings() {
     if (validateStep()) {
       try {
         const sendData = await Api.saveConfigApp(data);
+        setAlertMessage({
+          open: true,
+          message: "Configurações salvas com sucesso!",
+          status: "success",
+          title: "Sucesso!"
+        });
 
+        setTimeout(() => nav("/"), 2000);
       } catch (error) {
         setAlertMessage({
           open: true,

@@ -1,106 +1,166 @@
+/* ============================
+   WELCOME – ESTILO WINDOWS 11
+===============================*/
+
 .welcomeComponent {
   width: 100%;
   height: 100vh;
-  position: relative;
+  padding: 32px;
+  background: var(--background);
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* Botão de Configurações */
-  .settingsBtn {
-    position: absolute;
-    top: 28px;
-    right: 28px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-
-  .settingsBtn:hover {
-    background: var(--button-hover);
-  }
-
+  position: relative;
+  backdrop-filter: blur(18px);
 }
 
+/* Botão de Configurações */
+.settingsBtn {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  width: 42px;
+  height: 42px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.20);
+  cursor: pointer;
+  transition: 0.2s;
+  color: var(--primary-dark);
+  font-size: 18px;
+}
 
-/* CARD PRINCIPAL */
+.settingsBtn:hover {
+  background: rgba(255,255,255,0.28);
+  transform: scale(1.05);
+}
+
+/* CARD PRINCIPAL – Fluent Style */
 .welcomeCard {
   width: 90%;
   max-width: 1100px;
   height: 75vh;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-radius: 12px !important;
+  grid-template-columns: 1.2fr 1fr;
+  border-radius: 18px;
   overflow: hidden;
+
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255,255,255,0.35);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.15),
+    0 4px 12px rgba(0,0,0,0.08);
 }
 
 /* LADO ESQUERDO */
 .leftContent {
-  padding: 50px;
+  padding: 60px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .leftContent h1 {
-  font-size: 32px;
-  color: var(--primary);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 12px;
 }
 
 .leftContent .subtitle {
-  margin-top: 8px;
+  margin-top: 6px;
   color: var(--text2);
-  font-size: 16px;
-  max-width: 400px;
+  font-size: 18px;
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+/* BOTÃO – Windows 11 */
+.leftContent .btn-primary {
+  margin-top: 26px;
+  padding: 12px 22px;
+  font-size: 17px;
+  border-radius: 10px;
+  background: var(--primary);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 94, 230, 0.28);
+  transition: 0.2s ease;
+}
+
+.leftContent .btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
 }
 
 /* LADO DIREITO */
 .rightContent {
-  background: transparent;
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-dark) 100%
+  );
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* PANEL AZUL (substituto do purpleBox) */
 .purpleBox {
   width: 100%;
   height: 100%;
-  background: var(--primary);
-  color: #fff;
-  padding: 50px;
+  padding: 55px;
   position: relative;
-  border-radius: 8px;
 }
 
 .purpleBox h2 {
   font-size: 28px;
-  margin-bottom: 4px;
+  font-weight: 600;
 }
 
+/* Linha decorativa Windows */
 .miniLine {
-  width: 40px;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.7);
-  margin: 18px 0;
+  width: 60px;
+  height: 4px;
+  background: rgba(255,255,255,0.85);
+  border-radius: 4px;
+  margin: 20px 0;
 }
 
 /* IMAGEM */
 .imageBox {
   position: absolute;
   bottom: 0;
-  right: 40px;
+  right: 30px;
 }
 
 .imageBox img {
-  width: 75%;
-  object-fit: cover;
-  border-radius: 8px;
+  width: 70%;
+  border-radius: 16px;
+  filter: drop-shadow(0 8px 25px rgba(0,0,0,0.25));
+}
+
+/* RESPONSIVO */
+@media (max-width: 900px) {
+  .welcomeCard {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .rightContent {
+    height: 350px;
+  }
+
+  .imageBox img {
+    width: 55%;
+  }
 }

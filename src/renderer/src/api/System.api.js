@@ -29,9 +29,41 @@ export class systemApi {
       if (!postData) {
         throw "Erro ao salvar os dados: " + postData.statusText;
       }
-
       const data = await postData.json();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
 
+  async getPasswordAdmin() {
+    try {
+      const getData = await fetch(appEnv.server + "/getpassword");
+      if (!getData) {
+        throw "Erro ao buscar a senha admin: " + getData.statusText;
+      }
+
+      const data = await getData.json();
+
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async setPasswordAdmin(password) {
+    try {
+      const postData = await fetch(appEnv.server + "/setpassword", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+      if (!postData) {
+        throw "Erro ao salvar a senha admin: " + postData.statusText;
+      }
+      const data = await postData.json();
       return data;
     } catch (error) {
       throw error;

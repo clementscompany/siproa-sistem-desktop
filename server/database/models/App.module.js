@@ -77,5 +77,26 @@ class AppModule {
       throw error;
     }
   }
+
+  async updateAdminPassword(password) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = `
+        UPDATE config
+        SET admin_senha = ?
+        WHERE id = 1
+      `;
+        DB.run(query, [password], function (err) {
+          if (err) {
+            return reject(err);
+          } else {
+            resolve({ affectedRows: this.changes });
+          }
+        });
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 export default new AppModule();

@@ -25,7 +25,9 @@ export default function SettingsPage() {
         return;
       }
 
-      nav("/")
+      setTimeout(() => {
+        nav("/")
+      }, 1000)
 
     } catch (error) {
       setIsLoading(false);

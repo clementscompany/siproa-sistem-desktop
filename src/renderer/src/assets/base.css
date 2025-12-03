@@ -14,8 +14,9 @@
 
   --error-bg: #f8d7da;
   --error-text: #a30011;
-  --error-button: #fb4759;
+  --error-button: #f63649;
   --color-button: #ffffff;
+  --error-bg: #fa3e4e;
 
   --warning-bg: #fff3cd;
   --warning-text: #856404;
@@ -85,7 +86,7 @@
   --success-bg: #155724;
   --success-text: #d5f3de;
 
-  --error-bg: #842029;
+  --error-bg: #f04856;
   --error-text: #f8d7da;
 
   --warning-bg: #856404;
@@ -170,4 +171,24 @@ input:focus {
 a {
   color: var(--links);
   text-decoration: none;
+}
+
+.inputBox{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  gap: 12px;
+  i{
+    border: 1px solid var(--border);
+    padding: 8px; 
+    border-radius: 6px;
+    &:nth-of-type(2){
+      background-color: var(--primary);
+      color: var(--color-button);
+      &:hover{
+        transform: scale(1.03);
+      }
+    }
+  }
 }

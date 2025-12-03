@@ -1,0 +1,37 @@
+.avatarContainer{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--card);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  i{
+    font-size:18pt;
+  }
+  h4{
+    margin:0;
+    font-weight:500;
+    color: var(--text);
+  }
+  small{
+    color: var(--text2);
+    font-weight:400;
+    margin:0;
+  }
+
+  .profileButton{
+    margin-left: auto;
+    background: var(--primary);
+    cursor: default;
+    transition: 0.15s;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    i{
+      font-size:18pt;
+      color: var(--color-button);
+    }
+  }
+}

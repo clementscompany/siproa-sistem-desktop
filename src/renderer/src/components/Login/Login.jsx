@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import AdminLogin from "./AdminLogin";
 import UserLogin from "./UserLogin";
 import image from "../../assets/img/wellcome.png";
+import { useNavigate } from "react-router-dom";
 export default function LoginComponent() {
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -15,12 +16,22 @@ export default function LoginComponent() {
     confirm: () => { },
     showCancelButton: false,
   })
+  const nav = useNavigate();
   useEffect(() => {
     fetchDataLogin();
   }, [])
 
   async function fetchDataLogin() {
     try {
+      const remember_login = localStorage.getItem("rememberLogin");
+      if (!remember_login) {
+        return;
+      }
+
+      setIsLoading(true);
+      setTimeout(() => {
+        nav("/home");
+      }, 1000)
 
     } catch (error) {
 

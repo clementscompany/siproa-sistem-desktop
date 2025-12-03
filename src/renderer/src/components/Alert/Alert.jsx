@@ -7,7 +7,8 @@ export default function Alert({
   showCancellButton = false,
   status,
   onClose,
-  onCancell
+  onCancell,
+  cancelMessage
 }) {
   return (
     <div className="alertModal">
@@ -26,7 +27,7 @@ export default function Alert({
         <div className="modalFooter">
           {showCancellButton && (
             <button className="cancelButton" onClick={onCancell}>
-              cancelar
+              {cancelMessage ?? "cancelar"}
             </button>
           )}
 

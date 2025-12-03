@@ -121,6 +121,9 @@
       width: 30%;
       background-color: var(--primary);
       color: var(--color-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .forgotContainer{

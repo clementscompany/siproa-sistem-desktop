@@ -1,0 +1,138 @@
+.menu {
+  background-color: var(--primary); /* FUNDO QUE PEDISTE */
+  padding: 6px;
+  height: 100vh;
+  box-shadow: var(--shadow);
+  overflow-y: auto;
+  transition: background 0.3s ease-in-out;
+
+  .logo {
+    width: 100%;
+    position: relative;
+    margin-top: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* linha discreta */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+
+    img{
+      width: 33px;
+      height: 33px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    h4 {
+      color: #fff;
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+
+    .menu-group {
+      border-radius: 6px;
+      margin-top: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease-in-out;
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background 0.3s ease-in-out;
+
+        i,
+        span {
+          color: #fff; /* texto branco por causa do fundo primary */
+        }
+
+        &:hover {
+          background-color: var(--primary-hover);
+          box-shadow: var(--shadow);
+
+          span,
+          i {
+            color: #ffffff;
+          }
+        }
+
+        .arrow {
+          margin-left: auto;
+          font-size: 12px;
+          color: #ffffffc9;
+          transition: transform 0.3s ease;
+        }
+      }
+
+      &.active .menu-item {
+        background-color: var(--primary-dark);
+        span,
+        i {
+          color: #fff;
+        }
+      }
+
+      .submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.35s ease, opacity 0.35s ease;
+        opacity: 0;
+        padding-left: 24px;
+        margin-top: 0;
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+
+        li {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          padding: 6px 8px;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: background 0.3s ease-in-out;
+
+          i {
+            font-size: 10px;
+            color: #e4e9f2;
+          }
+
+          span {
+            color: #e4e9f2;
+            font-size: 13px;
+            font-weight: 500;
+          }
+
+          &:hover {
+            background-color: #ffffff1a;
+            span,
+            i {
+              color: #fff;
+            }
+          }
+
+          &.active {
+            background-color: var(--primary-dark);
+            span,
+            i {
+              color: #fff;
+            }
+          }
+        }
+
+        &.submenu-open {
+          max-height: 300px;
+          opacity: 1;
+          margin-top: 6px;
+        }
+      }
+
+      &.open .arrow {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}

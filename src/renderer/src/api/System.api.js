@@ -69,4 +69,36 @@ export class systemApi {
       throw error;
     }
   }
+
+  async loginAdmin(password) {
+    try {
+      const postData = await fetch(appEnv.server + "/loginadmin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+      if (!postData) {
+        throw "Erro ao realizar login admin: " + postData.statusText;
+      }
+      const data = await postData.json();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getDashboardStats() {
+    try {
+      const getData = await fetch(appEnv.server + "/dashboard/stats");
+      if (!getData) {
+        throw "Erro ao buscar os dados do dashboard: " + getData.statusText;
+      }
+      const data = await getData.json();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import AppModule from "../../database/models/App.module.js";
-
+import bcrypt from "bcrypt";
 class AdminController {
   async getPassordAdmin(req, res) {
     try {
@@ -27,7 +27,10 @@ class AdminController {
   async setPasswordAdmin(req, res) {
     try {
       const { password } = req.body;
-      const updateResult = await AppModule.updateAdminPassword(password);
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = bcrypt.hashSync(password, salt);
+
+      const updateResult = await AppModule.updateAdminPassword(hashedPassword);
       if (updateResult.affectedRows === 0) {
         res.status(404).json({
           success: false,
@@ -61,7 +64,23 @@ class AdminController {
         return;
       }
       const adminConfig = adminData[0];
-      const { username, password } = req.body;
+      const { password } = req.body;
+      const passwordMatch = bcrypt.compareSync(
+        password,
+        adminConfig.admin_senha,
+      );
+      if (!passwordMatch) {
+        res.status(401).json({
+          success: false,
+          message: "Senha incorreta",
+        });
+        return;
+      }
+      res.status(200).json({
+        success: true,
+        message: "Login bem-sucedido",
+      });
+
     } catch (error) {
       res.status(500).json({
         success: false,

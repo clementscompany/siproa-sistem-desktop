@@ -1,0 +1,27 @@
+.container{
+  display: flex;
+  justify-content: space-between;
+
+  .center{
+    width: 100%;
+  }
+
+  .menuSide{
+    min-width: 15%;
+    @media screen and (max-width:900px) {
+      min-width: auto;
+    }
+  }
+
+  @media screen and (max-width:800px) {
+    .rightSide{
+      display: none;
+    }
+  }
+
+  .rightSide{
+    width: 35%;
+    background-color: var(--card);
+    box-shadow: var(--shadow-sm);
+  }
+}

@@ -19,40 +19,42 @@ export default function Analitics() {
       setData([
         {
           title: "Faturamento Total",
-          icon: <FaRegMoneyBillAlt />,
-          color: "#A78BFA",
+          icon: <FaRegMoneyBillAlt color="#6D28D9" />, // roxo
+          color: "#6D28D9",
           value: result?.data?.faturamentoTotal ?? 0,
           progress: result?.data?.faturamentoTotal ?? 0
         },
         {
           title: "Total Contas",
-          icon: <FaUsers />,
-          color: "#e0913c",
+          icon: <FaUsers color="#2563EB" />, // azul
+          color: "#2563EB",
           value: result?.data?.totalContas ?? 0,
           progress: result?.data?.totalContas ?? 0
         },
         {
           title: "Total Exportadores",
-          icon: <FaBuilding />,
-          color: "#34d399",
+          icon: <FaBuilding color="#F59E0B" />, // laranja
+          color: "#F59E0B",
           value: result?.data?.totalExportadores ?? 0,
           progress: result?.data?.totalExportadores ?? 0
         },
         {
           title: "Total Importadores",
-          icon: <FaBuilding />,
-          color: "#f87171",
+          icon: <FaBuilding color="#10B981" />, // verde
+          color: "#10B981",
           value: result?.data?.totalImportadores ?? 0,
           progress: result?.data?.totalImportadores ?? 0
         },
         {
           title: "Total Transportes",
-          icon: <FaTruck />,
-          color: "#60a5fa",
+          icon: <FaTruck color="#EF4444" />, // vermelho
+          color: "#EF4444",
           value: result?.data?.totalTransportes ?? 0,
           progress: result?.data?.totalTransportes ?? 0
         }
       ]);
+
+
 
     } catch (error) {
       alert("Erro ao processar os dados do sistema");

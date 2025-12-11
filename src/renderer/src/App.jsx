@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import Alert from './components/Alert/Alert';
 import HomePage from './pages/home/Index';
 import Layout from './layout/LayoutBase';
+import CRF from './pages/crf/CRF';
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
           <Route path='/' element={<WellCome />} />
           <Route path='/settings' element={<SettingsPage />} />
           <Route path='/home' element={<Layout children={<HomePage />} path={"/home"} />} /> 
+          <Route path='/crf' element={<Layout children={<CRF />} path={"/crf"} />} /> 
           <Route path='*' element={<Layout children={<HomePage />} path={"/home"} />} /> 
         </Routes>
       </BrowserRouter>

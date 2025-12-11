@@ -5,6 +5,9 @@
   box-shadow: var(--shadow);
   overflow-y: auto;
   transition: background 0.3s ease-in-out;
+  position: static;
+  top: 0;
+  left: 0;
 
   .logo {
     width: 100%;

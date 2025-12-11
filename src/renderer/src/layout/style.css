@@ -1,27 +1,38 @@
-.container{
+.container {
   display: flex;
   justify-content: space-between;
+  height: 100vh;        /* <- altura exata da tela */
+  overflow: hidden;     /* <- impede scroll global */
 
-  .center{
+  .center {
     width: 100%;
+    height: 100%;       /* <- ocupa toda área */
+    overflow-y: auto;   /* <- só o center terá scroll */
+    padding: 15px;
+    box-sizing: border-box;
   }
 
-  .menuSide{
+  .menuSide {
     min-width: 15%;
+    height: 100vh;      /* <- deixa o menu fixo */
+    overflow: hidden;   /* evita scroll no menu */
+
     @media screen and (max-width:900px) {
       min-width: auto;
     }
   }
 
   @media screen and (max-width:800px) {
-    .rightSide{
+    .rightSide {
       display: none;
     }
   }
 
-  .rightSide{
+  .rightSide {
     width: 35%;
+    height: 100vh;      /* mantém altura fixa */
     background-color: var(--card);
     box-shadow: var(--shadow-sm);
+    overflow-y: auto;   /* caso o conteúdo seja longo */
   }
 }

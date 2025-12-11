@@ -1,37 +1,14 @@
 import sqlite3 from "sqlite3";
 export const DB = new sqlite3.Database("du_system.db");
 
-const CreateTable = () => {
+export const CreateTable = () => {
   DB.serialize(() => {
-    // garantir integridade referencial
-    DB.run(`PRAGMA foreign_keys = ON;`);
+    // Desliga temporariamente foreign keys
+    DB.run(`PRAGMA foreign_keys = OFF;`);
 
-    DB.run(`
-      CREATE TABLE IF NOT EXISTS config (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      empresa_nome TEXT,
-      empresa_nif TEXT,
-      empresa_endereco TEXT,
-      empresa_telefone TEXT,
-      empresa_cedula TEXT,
-      empresa_email TEXT,
-      admin_usuario TEXT,
-      admin_email TEXT DEFAULT NULL,
-      admin_senha TEXT DEFAULT NULL,
-      admin_confirmar TEXT,
-      moeda_padrao TEXT,
-      taxa_cambio VARCHAR(10) DEFAULT '1',
-      unidade_padrao TEXT,
-      tema TEXT,
-      idioma TEXT,
-      criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-
-    // ================================
+    // -------------------------------
     // PAÍSES
-    // ================================
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS paises (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,9 +18,9 @@ const CreateTable = () => {
       );
     `);
 
-    // ================================
+    // -------------------------------
     // PORTOS / FRONTEIRAS
-    // ================================
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS portos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,9 +32,9 @@ const CreateTable = () => {
       );
     `);
 
-    // ================================
+    // -------------------------------
     // UNIDADES
-    // ================================
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS unidades (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,9 +44,9 @@ const CreateTable = () => {
       );
     `);
 
-    // ================================
-    // TIPOS DE DOCUMENTO
-    // ================================
+    // -------------------------------
+    // TIPOS DOCUMENTO
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS tipos_documento (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,9 +56,9 @@ const CreateTable = () => {
       );
     `);
 
-    // ================================
+    // -------------------------------
     // IMPORTADORES
-    // ================================
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS importadores (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -97,9 +74,9 @@ const CreateTable = () => {
       );
     `);
 
-    // ================================
+    // -------------------------------
     // EXPORTADORES
-    // ================================
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS exportadores (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -115,9 +92,9 @@ const CreateTable = () => {
       );
     `);
 
-    // ================================
+    // -------------------------------
     // REGIMES
-    // ================================
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS regimes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -127,9 +104,9 @@ const CreateTable = () => {
       );
     `);
 
-    // ================================
+    // -------------------------------
     // ADUANAS
-    // ================================
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS aduanas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -140,9 +117,9 @@ const CreateTable = () => {
       );
     `);
 
-    // ================================
+    // -------------------------------
     // USUÁRIOS
-    // ================================
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS usuarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -157,9 +134,9 @@ const CreateTable = () => {
       );
     `);
 
-    // ================================
+    // -------------------------------
     // DESPACHANTES
-    // ================================
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS despachantes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -174,9 +151,45 @@ const CreateTable = () => {
       );
     `);
 
-    // ================================
-    // CONTAS (DU)
-    // ================================
+    // -------------------------------
+    // MOEDAS
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS moedas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        codigo TEXT UNIQUE NOT NULL,
+        nome TEXT NOT NULL,
+        sigla TEXT,
+        active INTEGER DEFAULT 1
+      );
+    `);
+
+    // -------------------------------
+    // VIAS
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS vias (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT UNIQUE NOT NULL,
+        active INTEGER DEFAULT 1
+      );
+    `);
+
+    // -------------------------------
+    // TIPOS CLIENTES
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS tipos_clientes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        codigo TEXT UNIQUE,
+        descricao TEXT,
+        active INTEGER DEFAULT 1
+      );
+    `);
+
+    // -------------------------------
+    // CONTAS
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS contas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -214,7 +227,6 @@ const CreateTable = () => {
       );
     `);
 
-    // índices contas
     DB.run(
       `CREATE INDEX IF NOT EXISTS idx_contas_importador ON contas(importador_id);`,
     );
@@ -228,9 +240,9 @@ const CreateTable = () => {
       `CREATE INDEX IF NOT EXISTS idx_contas_aduana ON contas(aduana_id);`,
     );
 
-    // ================================
+    // -------------------------------
     // TRANSPORTE
-    // ================================
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS transporte (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -246,17 +258,14 @@ const CreateTable = () => {
         data_partida DATE,
         active INTEGER DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (conta_id) REFERENCES contas(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (porto_fronteira_id) REFERENCES portos(id) ON DELETE SET NULL ON UPDATE CASCADE
+        FOREIGN KEY (conta_id) REFERENCES contas(id) ON DELETE CASCADE,
+        FOREIGN KEY (porto_fronteira_id) REFERENCES portos(id) ON DELETE SET NULL
       );
     `);
 
-    // ================================
-    // Restante das tabelas (valores, adicoes, mercadorias, faturas, posicoes, avaliacao, documentos, anexos, logs, empresas, pauta)
-    // ================================
-    // Seguir mesmo padrão: adicionar active INTEGER DEFAULT 1 nas tabelas que podem ser "desativadas" e manter FOREIGN KEY consistente.
-
-    // exemplo: tabela valores
+    // -------------------------------
+    // VALORES
+    // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS valores (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -275,14 +284,136 @@ const CreateTable = () => {
         imposto_s REAL DEFAULT 0,
         active INTEGER DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (conta_id) REFERENCES contas(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (conta_id) REFERENCES contas(id) ON DELETE CASCADE
       );
     `);
 
+    // -------------------------------
+    // CRF
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS crf (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        numero_crf TEXT UNIQUE NOT NULL,
+        numero_auto_crf INTEGER,
+        req_f TEXT,
+        tipo_cliente_id INTEGER,
+        cliente_id INTEGER,
+        cliente_nome TEXT,
+        cliente_nif TEXT,
+        via_id INTEGER,
+        conta_id INTEGER,
+        data_entrada DATE,
+        data_pagamento DATE,
+        du_numero TEXT,
+        bl_numero TEXT,
+        c_marca TEXT,
+        crf_ou_f TEXT,
+        factura TEXT,
+        fob REAL DEFAULT 0,
+        frete REAL DEFAULT 0,
+        seguro REAL DEFAULT 0,
+        cif REAL DEFAULT 0,
+        consignatario TEXT,
+        pais_id INTEGER,
+        moeda_id INTEGER,
+        cambio REAL DEFAULT 1,
+        cambio_usd REAL DEFAULT 1,
+        valor_aduaneiro REAL DEFAULT 0,
+        designacao TEXT,
+        imposto_s_impo REAL DEFAULT 0,
+        iva REAL DEFAULT 0,
+        imposto_selo REAL DEFAULT 0,
+        sobre_taxa REAL DEFAULT 0,
+        emolumentos_gerais REAL DEFAULT 0,
+        multas_crf REAL DEFAULT 0,
+        subtotal REAL DEFAULT 0,
+        ep17 REAL DEFAULT 0,
+        veterinario_saude REAL DEFAULT 0,
+        validacao_bl INTEGER DEFAULT 0,
+        assistencia REAL DEFAULT 0,
+        deslocacao REAL DEFAULT 0,
+        honorario REAL DEFAULT 0,
+        inerentes REAL DEFAULT 0,
+        licenciamento REAL DEFAULT 0,
+        declaracao_valor REAL DEFAULT 0,
+        modelo0 REAL DEFAULT 0,
+        fotocopias REAL DEFAULT 0,
+        t_emolument REAL DEFAULT 0,
+        continuacoes_adicoes REAL DEFAULT 0,
+        total_geral REAL DEFAULT 0,
+        total_por_extenso TEXT,
+        observacoes TEXT,
+        estado_pagamento TEXT DEFAULT 'PENDENTE',
+        referencia_bancaria TEXT,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        criado_por INTEGER,
+        atualizado_por INTEGER,
+        FOREIGN KEY (cliente_id) REFERENCES importadores(id) ON DELETE SET NULL,
+        FOREIGN KEY (via_id) REFERENCES vias(id) ON DELETE SET NULL,
+        FOREIGN KEY (pais_id) REFERENCES paises(id) ON DELETE SET NULL,
+        FOREIGN KEY (moeda_id) REFERENCES moedas(id) ON DELETE SET NULL,
+        FOREIGN KEY (tipo_cliente_id) REFERENCES tipos_clientes(id) ON DELETE SET NULL,
+        FOREIGN KEY (conta_id) REFERENCES contas(id) ON DELETE SET NULL
+      );
+    `);
+
+    DB.run(`CREATE INDEX IF NOT EXISTS idx_crf_numero ON crf(numero_crf);`);
+    DB.run(`CREATE INDEX IF NOT EXISTS idx_crf_cliente ON crf(cliente_id);`);
+    DB.run(
+      `CREATE INDEX IF NOT EXISTS idx_crf_estado ON crf(estado_pagamento);`,
+    );
+    DB.run(`CREATE INDEX IF NOT EXISTS idx_crf_conta ON crf(conta_id);`);
+
+    // -------------------------------
+    // CRF ITENS
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS crf_itens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        crf_id INTEGER NOT NULL,
+        descricao TEXT NOT NULL,
+        valor REAL DEFAULT 0,
+        tipo TEXT,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (crf_id) REFERENCES crf(id) ON DELETE CASCADE
+      );
+    `);
+
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS config (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      empresa_nome TEXT,
+      empresa_nif TEXT,
+      empresa_endereco TEXT,
+      empresa_telefone TEXT,
+      empresa_cedula TEXT,
+      empresa_email TEXT,
+      admin_usuario TEXT,
+      admin_email TEXT DEFAULT NULL,
+      admin_senha TEXT DEFAULT NULL,
+      admin_confirmar TEXT,
+      moeda_padrao TEXT,
+      taxa_cambio VARCHAR(10) DEFAULT '1',
+      unidade_padrao TEXT,
+      tema TEXT,
+      idioma TEXT,
+      criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // Reativa foreign keys
+    DB.run(`PRAGMA foreign_keys = ON;`);
+
     console.log(
-      "Base de dados DU criada/atualizada com sucesso (versão final corrigida)!",
+      "Banco de dados DU criado com sucesso (todas as tabelas exceto config)!",
     );
   });
 };
 
-export { CreateTable };
+// Cria as tabelas
+CreateTable();

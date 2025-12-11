@@ -1,4 +1,5 @@
 import Avatar from "../../components/elements/Avatar";
+import TableCRF from "../../components/tables/TableCRF";
 import Analitics from "./Analiics";
 import "./home.css";
 export default function HomePage() {
@@ -12,7 +13,7 @@ export default function HomePage() {
         </div>
         <Avatar />
       </div>
-      <div style={{ margin: 12, color: "var(--text2)", gap: 12, display:"flex", alignItems:"center" }}>
+      <div style={{ margin: 12, color: "var(--text2)", gap: 12, display: "flex", alignItems: "center" }}>
         <small> Data:
           {" "}{new Date().toLocaleDateString('pt-AO')}
         </small>
@@ -21,6 +22,13 @@ export default function HomePage() {
 
       <div className="">
         <Analitics />
+      </div>
+
+      <div style={{ padding: 12 }}>
+        <div style={{ marginBottom: 12 }}>
+          <small style={{ color: "var(--text2)", fontWeight:"700" }}>Tabela de requisição de fundos</small>
+        </div>
+        <TableCRF limit={8} />
       </div>
     </div>
   )

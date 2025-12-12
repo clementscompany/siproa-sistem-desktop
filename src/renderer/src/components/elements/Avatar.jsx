@@ -11,7 +11,7 @@ export default function Avatar() {
     try {
       const userData = await Api.getConfigApp();
       const { result } = userData
-      setUser(result[0])      
+      setUser(result[0])
     } catch (error) {
       alert("Erro ao processar os dados do sistema!")
     }

@@ -1,8 +1,10 @@
+import { useState } from "react";
 import Avatar from "../../components/elements/Avatar";
 import TableCRF from "../../components/tables/TableCRF";
 import FormCRF from "./FormCrf";
 
 export default function CRF() {
+  const [isOpenDialog, setIsOpenDialod] = useState(false);
   return (
     <div style={{ padding: 20 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -20,7 +22,7 @@ export default function CRF() {
             <i className="bi bi-filetype-xls" style={{ border: "none", color: "var(--color-button)" }}></i>
           </button>
 
-          <button style={{ backgroundColor: "var(--primary)" }}>
+          <button style={{ backgroundColor: "var(--primary)" }} onClick={() => setIsOpenDialod(true)}>
             <i className="bi bi-plus" style={{ border: "none", color: "var(--color-button)" }}></i>
           </button>
         </div>
@@ -32,7 +34,7 @@ export default function CRF() {
         <TableCRF />
       </div>
 
-      <FormCRF />
+      <FormCRF isOpen={isOpenDialog} onClose={() => setIsOpenDialod(false)} />
     </div>
   );
 }

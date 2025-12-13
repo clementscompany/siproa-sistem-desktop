@@ -35,3 +35,37 @@
     }
   }
 }
+
+.searchInputBox{
+  position: absolute;
+  top: -44px;
+  left: 0;
+  background-color: var(--card);
+  padding: 3px 0;
+  border-radius: 6px;
+  width: 100%;
+
+  ul{
+    background-color: var(--background);
+    max-height: 100px;
+    overflow-y: auto;
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 12px;
+
+    li{
+      margin: 12px 0;
+      background-color: var(--card);
+      padding: 12px;
+    }
+
+    
+  }
+
+  i{
+    align-self: flex-end;
+    padding: 3px;
+    color: #1c1c1c;
+  }
+}

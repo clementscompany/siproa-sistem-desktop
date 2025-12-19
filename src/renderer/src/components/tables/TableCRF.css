@@ -1,0 +1,120 @@
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0;
+}
+
+/* ================================
+   TABLE BASE
+================================ */
+.table-crf {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: var(--card);
+}
+
+/* ================================
+   HEADER
+================================ */
+.table-crf thead th {
+  position: sticky;
+  top: 0;
+  background: var(--primary);
+  color: var(--color-button);
+  text-align: left;
+  font-weight: 600;
+  padding: 8px 10px;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+/* ================================
+   BODY
+================================ */
+.table-crf tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.table-crf tbody tr:hover {
+  background: var(--button-hover);
+}
+
+.table-crf td {
+  padding: 6px 10px;
+  color: var(--text);
+  white-space: nowrap;
+  max-width: 180px;
+}
+
+/* ================================
+   TEXT TRUNCATE
+================================ */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================
+   STATUS
+================================ */
+.status {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status.ativo {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.status.inativo {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.status.pago {
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+
+/* ================================
+   ACTIONS
+================================ */
+.table-crf .actions {
+  text-align: center;
+  min-width: 110px;
+}
+
+.table-crf .actions button {
+  border: none;
+  background: transparent;
+  padding: 4px;
+  margin: 0 2px;
+  border-radius: 6px;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.table-crf .actions button:hover {
+  background: var(--button);
+  transform: scale(1.05);
+}
+
+.table-crf .actions i {
+  font-size: 15px;
+  color: var(--text2);
+}
+
+/* ================================
+   ROW STATE (visual leve)
+================================ */
+tr[data-state="Inativo"] {
+  background: rgba(250, 62, 78, 0.05);
+}
+
+tr[data-state="Ativo"] {
+  background: rgba(21, 87, 36, 0.05);
+}

@@ -2,10 +2,12 @@ import { useState } from "react";
 import Avatar from "../../components/elements/Avatar";
 import TableCRF from "../../components/tables/TableCRF";
 import FormCRF from "./FormCrf";
+import CrfSheetView from "./CrfSheetView";
 
 export default function CRF() {
   const [isOpenDialog, setIsOpenDialod] = useState(false);
   const [refreshFlag, setRefreshFlag] = useState(0);
+  const [viewId, setViewId] = useState(null);
 
   const handleSaved = () => {
     setRefreshFlag((v) => v + 1);
@@ -37,7 +39,7 @@ export default function CRF() {
 
       {/* <!-- Lista  --> */}
       <div style={{ marginTop: 44, maxHeight: "calc(100% - 100px)", overflowY: "auto" }}>
-        <TableCRF key={refreshFlag} />
+        <TableCRF key={refreshFlag} onViewDetails={(item) => setViewId(item.id)} />
       </div>
 
       <FormCRF
@@ -45,6 +47,7 @@ export default function CRF() {
         onClose={() => setIsOpenDialod(false)}
         onSaved={handleSaved}
       />
+      <CrfSheetView open={!!viewId} crfId={viewId} onClose={() => setViewId(null)} />
     </div>
   );
 }

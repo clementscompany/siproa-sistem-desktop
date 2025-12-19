@@ -1,29 +1,23 @@
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
 import { CrfApi } from "../../api/Crf.api";
+import "./TableCRF.css";
 
 const crfApi = new CrfApi();
 
-export default function TableCRF({ limit = 0 }) {
-  const handleView = (item) => console.log("Ver:", item);
+export default function TableCRF({ limit = 0, onViewDetails }) {
+  const [data, setData] = useState([]);
+
+  const handleView = (item) => {
+    if (onViewDetails) onViewDetails(item);
+  };
+
   const handleEdit = (item) => console.log("Editar:", item);
   const handleDelete = (item) => console.log("Eliminar:", item);
-
-  const [data, setData] = useState([]);
 
   const fetchData = async () => {
     try {
       const result = await crfApi.getAll();
+
       const formatted = result.map(item => ({
         id: item.id,
         numero_crf: item.numero_crf,
@@ -32,13 +26,17 @@ export default function TableCRF({ limit = 0 }) {
         tipo_operador: "Importador",
         endereco: item.cliente_endereco || "N/A",
         telefone: item.cliente_telefone || "N/A",
-        data_emissao: item.data_entrada ? item.data_entrada.split('T')[0] : "N/A",
-        data_validade: item.data_pagamento ? item.data_pagamento.split('T')[0] : "N/A",
-        estado: item.estado_pagamento === "PAGO" ? "Pago" : (item.active ? "Ativo" : "Inativo"),
+        estado:
+          item.estado_pagamento === "PAGO"
+            ? "Pago"
+            : item.active
+            ? "Ativo"
+            : "Inativo"
       }));
+
       setData(limit ? formatted.slice(0, limit) : formatted);
-    } catch (error) {
-      console.error("Erro ao buscar CRFs:", error);
+    } catch (err) {
+      console.error("Erro ao buscar CRFs:", err);
     }
   };
 
@@ -47,72 +45,50 @@ export default function TableCRF({ limit = 0 }) {
   }, [limit]);
 
   return (
-    <TableContainer
-      component={Paper}
-      elevation={3}
+    <div className="table-wrapper card">
+      <table className="table-crf">
+        <thead>
+          <tr>
+            <th>Nº CRF</th>
+            <th>Empresa</th>
+            <th>NIF</th>
+            <th>Tipo</th>
+            <th>Endereço</th>
+            <th>Telefone</th>
+            <th>Estado</th>
+            <th className="actions">Ações</th>
+          </tr>
+        </thead>
 
-    >
-      <Table>
-        <TableHead>
-          <TableRow style={{ background: "var(--primary)" }}>
-            <TableCell sx={{ minWidth: 120 }}><strong style={{ color: "var(--color-button)" }}>Nº CRF</strong></TableCell>
-            <TableCell sx={{ minWidth: 180 }}><strong style={{ color: "var(--color-button)" }}>Empresa</strong></TableCell>
-            <TableCell sx={{ minWidth: 140 }}><strong style={{ color: "var(--color-button)" }}>NIF</strong></TableCell>
-            <TableCell sx={{ minWidth: 130 }}><strong style={{ color: "var(--color-button)" }}>Tipo</strong></TableCell>
-            <TableCell sx={{ minWidth: 200 }}><strong style={{ color: "var(--color-button)" }}>Endereço</strong></TableCell>
-            <TableCell sx={{ minWidth: 150 }}><strong style={{ color: "var(--color-button)" }}>Telefone</strong></TableCell>
-            <TableCell sx={{ minWidth: 120 }}><strong style={{ color: "var(--color-button)" }}>Estado</strong></TableCell>
-            <TableCell sx={{ minWidth: 150 }} align="center"><strong style={{ color: "var(--color-button)" }} >Ações</strong></TableCell>
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {data.map((item) => (
-            <TableRow
-              key={item.id}
-              sx={{
-                backgroundColor:
-                  item.estado === "Inativo"
-                    ? "#ffe5e5"
-                    : item.estado === "Ativo"
-                      ? "#e8ffe8"
-                      : "transparent",
-              }}
-            >
-              <TableCell>{item.numero_crf}</TableCell>
-              <TableCell>{item.empresa}</TableCell>
-              <TableCell>{item.nif}</TableCell>
-              <TableCell>{item.tipo_operador}</TableCell>
-              <TableCell>{item.endereco}</TableCell>
-              <TableCell>{item.telefone}</TableCell>
-              <TableCell><strong>{item.estado}</strong></TableCell>
-
-              <TableCell align="center">
-                <Tooltip title="Ver detalhes">
-                  <IconButton color="primary" onClick={() => handleView(item)}>
-                    <i className="bi bi-eye" style={{ fontSize: 18 }}></i>
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip title="Editar">
-                  <IconButton color="warning" onClick={() => handleEdit(item)}>
-                    <i className="bi bi-pencil-square" style={{ fontSize: 18 }}></i>
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip title="Eliminar">
-                  <IconButton color="error" onClick={() => handleDelete(item)}>
-                    <i className="bi bi-trash" style={{ fontSize: 18 }}></i>
-                  </IconButton>
-                </Tooltip>
-              </TableCell>
-
-            </TableRow>
+        <tbody>
+          {data.map(item => (
+            <tr key={item.id} data-state={item.estado}>
+              <td>{item.numero_crf?.slice(0, 6)}...</td>
+              <td className="truncate">{item.empresa}</td>
+              <td>{item.nif}</td>
+              <td>{item.tipo_operador}</td>
+              <td className="truncate">{item.endereco}</td>
+              <td>{item.telefone}</td>
+              <td>
+                <span className={`status ${item.estado.toLowerCase()}`}>
+                  {item.estado}
+                </span>
+              </td>
+              <td className="actions">
+                <button title="Ver" onClick={() => handleView(item)}>
+                  <i className="bi bi-eye" />
+                </button>
+                <button title="Editar" onClick={() => handleEdit(item)}>
+                  <i className="bi bi-pencil-square" />
+                </button>
+                <button title="Eliminar" onClick={() => handleDelete(item)}>
+                  <i className="bi bi-trash" />
+                </button>
+              </td>
+            </tr>
           ))}
-        </TableBody>
-
-      </Table>
-    </TableContainer>
+        </tbody>
+      </table>
+    </div>
   );
-
 }

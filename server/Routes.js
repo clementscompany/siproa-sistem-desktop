@@ -20,6 +20,7 @@ Route.get("/dashboard/stats", dashboardController.getStats);
 
 // CRF Routes
 Route.get("/crf", CrfController.getAll);
+Route.get("/crf/:id", CrfController.getById);
 Route.post("/crf", CrfController.create);
 Route.put("/crf/:id", CrfController.update);
 Route.delete("/crf/:id", CrfController.delete);

@@ -8,15 +8,48 @@ class CrfModule {
                importadores.nome as cliente_nome,
                importadores.nif as cliente_nif,
                importadores.morada as cliente_endereco,
-               importadores.telefone as cliente_telefone
+               importadores.telefone as cliente_telefone,
+               vias.nome as via_nome,
+               paises.nome as origem_nome,
+               moedas.nome as moeda_nome,
+               moedas.sigla as moeda_sigla
         FROM crf 
         LEFT JOIN importadores ON crf.cliente_id = importadores.id 
+        LEFT JOIN vias ON crf.via_id = vias.id
+        LEFT JOIN paises ON crf.pais_id = paises.id
+        LEFT JOIN moedas ON crf.moeda_id = moedas.id
         WHERE crf.active = 1
         ORDER BY crf.id DESC
       `;
       DB.all(query, (err, rows) => {
         if (err) reject(err);
         else resolve(rows);
+      });
+    });
+  }
+
+  async getById(id) {
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT crf.*, 
+               importadores.nome as cliente_nome,
+               importadores.nif as cliente_nif,
+               importadores.morada as cliente_endereco,
+               importadores.telefone as cliente_telefone,
+               vias.nome as via_nome,
+               paises.nome as origem_nome,
+               moedas.nome as moeda_nome,
+               moedas.sigla as moeda_sigla
+        FROM crf 
+        LEFT JOIN importadores ON crf.cliente_id = importadores.id 
+        LEFT JOIN vias ON crf.via_id = vias.id
+        LEFT JOIN paises ON crf.pais_id = paises.id
+        LEFT JOIN moedas ON crf.moeda_id = moedas.id
+        WHERE crf.id = ?
+      `;
+      DB.get(query, [id], (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
       });
     });
   }

@@ -46,6 +46,16 @@ export class CrfApi {
     }
   }
 
+  async getById(id) {
+    try {
+      const response = await fetch(`${appEnv.server}/crf/${id}`);
+      if (!response.ok) throw new Error("Erro ao buscar CRF");
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async delete(id) {
     try {
       const response = await fetch(`${appEnv.server}/crf/${id}`, {

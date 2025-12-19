@@ -28,6 +28,17 @@ class CrfController {
     }
   }
 
+  async getById(req, res) {
+    try {
+      const { id } = req.params;
+      const data = await CrfModule.getById(id);
+      res.json(data);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Erro ao buscar CRF" });
+    }
+  }
+
   async update(req, res) {
     try {
       const { id } = req.params;

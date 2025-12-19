@@ -1,20 +1,16 @@
 import { useState } from "react";
 import Avatar from "../../components/elements/Avatar";
-import TableCRF from "../../components/tables/TableCRF";
-import FormCRF from "./FormCrf";
+import TableClients from "../../components/tables/TableClients";
+import FormClientDialog from "./FormClient";
 
-export default function CRF() {
-  const [isOpenDialog, setIsOpenDialod] = useState(false);
+export default function ClientsPage() {
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [refreshFlag, setRefreshFlag] = useState(0);
-
-  const handleSaved = () => {
-    setRefreshFlag((v) => v + 1);
-  };
 
   return (
     <div style={{ padding: 20 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <h2 style={{ color: "var(--primary)" }}>Gestão de CRF</h2>
+        <h2 style={{ color: "var(--primary)" }}>Gestão de Clientes</h2>
         <Avatar />
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -28,22 +24,20 @@ export default function CRF() {
             <i className="bi bi-filetype-xls" style={{ border: "none", color: "var(--color-button)" }}></i>
           </button>
 
-          <button style={{ backgroundColor: "var(--primary)" }} onClick={() => setIsOpenDialod(true)}>
+          <button style={{ backgroundColor: "var(--primary)" }} onClick={() => setIsOpenDialog(true)}>
             <i className="bi bi-plus" style={{ border: "none", color: "var(--color-button)" }}></i>
           </button>
         </div>
       </div>
 
-
-      {/* <!-- Lista  --> */}
       <div style={{ marginTop: 44, maxHeight: "calc(100% - 100px)", overflowY: "auto" }}>
-        <TableCRF key={refreshFlag} />
+        <TableClients key={refreshFlag} />
       </div>
 
-      <FormCRF
+      <FormClientDialog
         isOpen={isOpenDialog}
-        onClose={() => setIsOpenDialod(false)}
-        onSaved={handleSaved}
+        onClose={() => setIsOpenDialog(false)}
+        onSaved={() => setRefreshFlag((v) => v + 1)}
       />
     </div>
   );

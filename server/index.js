@@ -11,7 +11,7 @@ Server.use(express.urlencoded({ extended: true }));
 Server.use(
   cors({
     origin: "*",
-    methods: ["GET", "POST", "PUT", "PATCH"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   }),
 );
 

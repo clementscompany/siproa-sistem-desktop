@@ -10,7 +10,7 @@ import SheetCrf from "./SheetCrf";
 const crfApi = new CrfApi();
 const importadoresApi = new ImportadoresApi();
 
-export default function FormDataCRF({ onClose }) {
+export default function FormDataCRF({ onClose, onSaved }) {
   const [openClientes, setOpenClientes] = useState(false);
   const [openPaises, setOpenPaises] = useState(false);
   const [clientSelected, setClientSelected] = useState("Selecione");
@@ -65,7 +65,6 @@ export default function FormDataCRF({ onClose }) {
     deslocacao: 0,
     honorario: 0,
     inerentes: 0,
-    du_valor: 0,
     licenciamento: 0,
     declaracao_valor: 0,
     modelo0: 0,
@@ -108,7 +107,6 @@ export default function FormDataCRF({ onClose }) {
     const desloc = parse(data.deslocacao);
     const honorario = parse(data.honorario);
     const inerentes = parse(data.inerentes);
-    const du = parse(data.du_valor);
 
     const lic = parse(data.licenciamento);
     const dec = parse(data.declaracao_valor);
@@ -117,7 +115,7 @@ export default function FormDataCRF({ onClose }) {
     const continuacoes = parse(data.continuacoes_adicoes);
     const totalEmolument = lic + dec + mod0 + foto + continuacoes;
 
-    const totalGeral = subtotal + ep17 + vet + validacao + assist + desloc + honorario + inerentes + du + totalEmolument;
+    const totalGeral = subtotal + ep17 + vet + validacao + assist + desloc + honorario + inerentes + totalEmolument;
 
     setData(prev => ({
       ...prev,
@@ -130,7 +128,7 @@ export default function FormDataCRF({ onClose }) {
   }, [
     data.fob, data.frete, data.seguro,
     data.imposto_s_impo, data.iva, data.imposto_selo, data.sobre_taxa, data.emolumentos_gerais, data.multas_crf,
-    data.ep17, data.veterinario_saude, data.validacao_bl, data.assistencia, data.deslocacao, data.honorario, data.inerentes, data.du_valor,
+    data.ep17, data.veterinario_saude, data.validacao_bl, data.assistencia, data.deslocacao, data.honorario, data.inerentes,
     data.licenciamento, data.declaracao_valor, data.modelo0, data.fotocopias, data.continuacoes_adicoes
   ]);
 
@@ -170,17 +168,36 @@ export default function FormDataCRF({ onClose }) {
   const handleSave = async (printAfter = false) => {
     try {
       setSaving(true);
-      await crfApi.create(data);
-      setAlertState({ open: true, status: "success", title: "Sucesso", message: "CRF salva com sucesso!" });
+      const result = await crfApi.create(data);
+      setAlertState({
+        open: true,
+        status: "success",
+        title: "Sucesso",
+        message: "CRF salva com sucesso!",
+        onClose: () => {
+          setAlertState((p) => ({ ...p, open: false }));
+          if (onSaved) {
+            onSaved(result);
+          }
+          onClose();
+        }
+      });
       if (printAfter) {
         // Trigger print logic here
         setTimeout(() => window.print(), 500);
       }
-      onClose();
     } catch (error) {
       console.error("Erro completo:", error);
       const errorMessage = error.message || error.toString() || "Erro ao salvar CRF";
-      setAlertState({ open: true, status: "error", title: "Erro", message: errorMessage });
+      setAlertState({
+        open: true,
+        status: "error",
+        title: "Erro",
+        message: errorMessage,
+        onClose: () => {
+          setAlertState((p) => ({ ...p, open: false }));
+        }
+      });
     } finally {
       setSaving(false);
       setShowPrintModal(false);
@@ -420,11 +437,6 @@ export default function FormDataCRF({ onClose }) {
         </div>
 
         <div style={inputBoxStyle}>
-          <label>DU</label>
-          <input type="number" name="du_valor" value={data.du_valor} onChange={handleChange} />
-        </div>
-
-        <div style={inputBoxStyle}>
           <label>Licenciamento</label>
           <input type="number" name="licenciamento" value={data.licenciamento} onChange={handleChange} />
         </div>
@@ -561,7 +573,7 @@ export default function FormDataCRF({ onClose }) {
           message={alertState.message}
           status={alertState.status}
           title={alertState.title}
-          onClose={() => setAlertState((p) => ({ ...p, open: false }))}
+          onClose={alertState.onClose || (() => setAlertState((p) => ({ ...p, open: false })))}
         />
       )}
     </div>

@@ -23,7 +23,7 @@ export default function Menu({ path }) {
       icon: <i className="bi bi-cash-stack"></i>,
       submenu: [
         { name: "Lista de CRFs", path: "/crf" },
-        { name: "Nova Requisição", path: "/crf/nova" },
+        { name: "Nova Requisição", path: "/nova-requisicao" },
         { name: "Aprovadas", path: "/crf/aprovadas" },
         { name: "Pendentes", path: "/crf/pendentes" },
       ],

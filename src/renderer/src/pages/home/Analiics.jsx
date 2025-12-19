@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { FaUsers, FaTruck, FaBuilding, FaRegMoneyBillAlt } from "react-icons/fa";
 import "./home.css";
 import { systemApi } from "../../api/System.api";
+import Alert from "../../components/Alert/Alert";
 
 export default function Analitics() {
   const api = new systemApi();
   const [data, setData] = useState([]);
+  const [errorAlert, setErrorAlert] = useState({ open: false, message: "", status: "error", title: "Erro" });
 
   useEffect(() => {
     fetchData();
@@ -57,7 +59,7 @@ export default function Analitics() {
 
 
     } catch (error) {
-      alert("Erro ao processar os dados do sistema");
+      setErrorAlert({ open: true, message: "Erro ao processar os dados do sistema", status: "error", title: "Erro inesperado" });
     }
   };
 
@@ -84,6 +86,14 @@ export default function Analitics() {
           </div>
         </div>
       ))}
+      {errorAlert.open === true && (
+        <Alert
+          message={errorAlert.message}
+          status={errorAlert.status}
+          title={errorAlert.title}
+          onClose={() => setErrorAlert(prev => ({ ...prev, open: false }))}
+        />
+      )}
     </div>
   );
 }

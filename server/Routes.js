@@ -2,6 +2,8 @@ import express from "express";
 import AppController from "./controllers/App.controller.js";
 import AdminController from "./controllers/auth/admin.controller.js";
 import dashboardController from "./controllers/dashboard/dashboard.controller.js";
+import CrfController from "./controllers/crf/crf.controller.js";
+import ClientController from "./controllers/clients/clients.controller.js";
 
 const Route = express.Router();
 
@@ -15,4 +17,18 @@ Route.post("/saveconfig", AppController.saveConfig);
 Route.post("/setpassword", AdminController.setPasswordAdmin);
 Route.post("/loginadmin", AdminController.loginAdmin);
 Route.get("/dashboard/stats", dashboardController.getStats);
+
+// CRF Routes
+Route.get("/crf", CrfController.getAll);
+Route.post("/crf", CrfController.create);
+Route.put("/crf/:id", CrfController.update);
+Route.delete("/crf/:id", CrfController.delete);
+
+// Client Routes (Importadores)
+Route.get("/clients", ClientController.getAll);
+Route.get("/clients/:id", ClientController.getById);
+Route.post("/clients", ClientController.create);
+Route.put("/clients/:id", ClientController.update);
+Route.delete("/clients/:id", ClientController.delete);
+
 export { Route };

@@ -7,6 +7,8 @@ import Alert from './components/Alert/Alert';
 import HomePage from './pages/home/Index';
 import Layout from './layout/LayoutBase';
 import CRF from './pages/crf/CRF';
+import ClientsPage from './pages/clients/Clients';
+import ImportadoresPage from './pages/importadores/Importadores';
 
 function App() {
 
@@ -16,9 +18,12 @@ function App() {
         <Routes>
           <Route path='/' element={<WellCome />} />
           <Route path='/settings' element={<SettingsPage />} />
-          <Route path='/home' element={<Layout children={<HomePage />} path={"/home"} />} /> 
-          <Route path='/crf' element={<Layout children={<CRF />} path={"/crf"} />} /> 
-          <Route path='*' element={<Layout children={<HomePage />} path={"/home"} />} /> 
+          <Route path='/home' element={<Layout children={<HomePage />} path={"/home"} />} />
+          <Route path='/crf' element={<Layout children={<CRF />} path={"/crf"} />} />
+          <Route path='/clientes' element={<Layout children={<ClientsPage />} path={"/clientes"} />} />
+          <Route path='/importadores' element={<Layout children={<ImportadoresPage />} path={"/importadores"} />} />
+          <Route path='/importadores/cadastrar' element={<Layout children={<ImportadoresPage />} path={"/importadores"} />} />
+          <Route path='*' element={<Layout children={<HomePage />} path={"/home"} />} />
         </Routes>
       </BrowserRouter>
     </>

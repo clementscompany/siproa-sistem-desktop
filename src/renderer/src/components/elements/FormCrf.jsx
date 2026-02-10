@@ -10,13 +10,14 @@ import SheetCrf from "./SheetCrf";
 const crfApi = new CrfApi();
 const importadoresApi = new ImportadoresApi();
 
-export default function FormDataCRF({ onClose, onSaved }) {
+export default function FormDataCRF({ onClose, onSaved, crfId }) {
   const [openClientes, setOpenClientes] = useState(false);
   const [openPaises, setOpenPaises] = useState(false);
   const [clientSelected, setClientSelected] = useState("Selecione");
   const [paisSelected, setPaisSelected] = useState("Selecione");
   const [clientsList, setClientsList] = useState([]);
   const [showPrintModal, setShowPrintModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [alertState, setAlertState] = useState({ open: false, message: "", status: "", title: "" });
 
@@ -24,6 +25,7 @@ export default function FormDataCRF({ onClose, onSaved }) {
     display: "flex",
     flexDirection: "column",
     gap: "5px",
+    alignItems: "flex-start",
   };
 
   const [data, setData] = useState({
@@ -31,8 +33,9 @@ export default function FormDataCRF({ onClose, onSaved }) {
     req_f: "",
     cliente_id: "",
     cliente: "",
+    cliente_nif: "",
+    cliente_endereco: "",
     data_entrada: new Date().toISOString().split('T')[0],
-    data_pagamento: "",
     du_numero: "",
     bl_numero: "",
     c_marca: "",
@@ -42,11 +45,11 @@ export default function FormDataCRF({ onClose, onSaved }) {
     frete: 0,
     seguro: 0,
     cif: 0,
+    via: "",
     via_id: "",
-    consignatario: "",
     pais_id: "",
     pais_nome: "",
-    moeda_id: "",
+    moeda: "",
     cambio: 1,
     valor_aduaneiro: 0,
     designacao: "",
@@ -59,6 +62,9 @@ export default function FormDataCRF({ onClose, onSaved }) {
     multas_crf: 0,
     subtotal: 0,
     ep17: 0,
+    ep_15: 0,
+    ep_14: 0,
+    servico_transitario: 0,
     veterinario_saude: 0,
     validacao_bl: 0,
     assistencia: 0,
@@ -68,9 +74,7 @@ export default function FormDataCRF({ onClose, onSaved }) {
     licenciamento: 0,
     declaracao_valor: 0,
     modelo0: 0,
-    fotocopias: 0,
     t_emolument: 0,
-    continuacoes_adicoes: 0,
     total_geral: 0,
     total_por_extenso: "",
     observacoes: "",
@@ -82,6 +86,58 @@ export default function FormDataCRF({ onClose, onSaved }) {
   useEffect(() => {
     importadoresApi.getAll().then(setClientsList).catch(console.error);
   }, []);
+
+  useEffect(() => {
+    if (!crfId) return;
+
+    let cancelled = false;
+    const load = async () => {
+      try {
+        setLoading(true);
+        const crf = await crfApi.getById(crfId);
+        if (cancelled) return;
+
+        if (!crf) {
+          setAlertState({
+            open: true,
+            status: "error",
+            title: "Erro",
+            message: "CRF não encontrada",
+            onClose: () => setAlertState((p) => ({ ...p, open: false })),
+          });
+          return;
+        }
+
+        setClientSelected(crf.cliente_nome || crf.cliente || "Selecione");
+        setPaisSelected(crf.origem_nome || crf.pais_nome || "Selecione");
+
+        setData((prev) => ({
+          ...prev,
+          ...crf,
+          cliente: crf.cliente_nome || crf.cliente || "",
+          cliente_nif: crf.cliente_nif || "",
+          cliente_endereco: crf.cliente_endereco || "",
+          pais_nome: crf.origem_nome || crf.pais_nome || "",
+        }));
+      } catch (error) {
+        if (cancelled) return;
+        setAlertState({
+          open: true,
+          status: "error",
+          title: "Erro",
+          message: "Falha ao carregar CRF",
+          onClose: () => setAlertState((p) => ({ ...p, open: false })),
+        });
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [crfId]);
 
   // Calculations
   useEffect(() => {
@@ -101,6 +157,9 @@ export default function FormDataCRF({ onClose, onSaved }) {
     const subtotal = imposto + iva + impostoSelo + sobreTaxa + emolumentos + multas;
 
     const ep17 = parse(data.ep17);
+    const ep15 = parse(data.ep_15);
+    const ep14 = parse(data.ep_14);
+    const servTrans = parse(data.servico_transitario);
     const vet = parse(data.veterinario_saude);
     const validacao = parse(data.validacao_bl);
     const assist = parse(data.assistencia);
@@ -111,11 +170,9 @@ export default function FormDataCRF({ onClose, onSaved }) {
     const lic = parse(data.licenciamento);
     const dec = parse(data.declaracao_valor);
     const mod0 = parse(data.modelo0);
-    const foto = parse(data.fotocopias);
-    const continuacoes = parse(data.continuacoes_adicoes);
-    const totalEmolument = lic + dec + mod0 + foto + continuacoes;
+    const totalEmolument = lic + dec + mod0;
 
-    const totalGeral = subtotal + ep17 + vet + validacao + assist + desloc + honorario + inerentes + totalEmolument;
+    const totalGeral = subtotal + ep17 + ep15 + ep14 + servTrans + vet + validacao + assist + desloc + honorario + inerentes + totalEmolument;
 
     setData(prev => ({
       ...prev,
@@ -128,8 +185,9 @@ export default function FormDataCRF({ onClose, onSaved }) {
   }, [
     data.fob, data.frete, data.seguro,
     data.imposto_s_impo, data.iva, data.imposto_selo, data.sobre_taxa, data.emolumentos_gerais, data.multas_crf,
-    data.ep17, data.veterinario_saude, data.validacao_bl, data.assistencia, data.deslocacao, data.honorario, data.inerentes,
-    data.licenciamento, data.declaracao_valor, data.modelo0, data.fotocopias, data.continuacoes_adicoes
+    data.ep17, data.ep_15, data.ep_14, data.servico_transitario,
+    data.veterinario_saude, data.validacao_bl, data.assistencia, data.deslocacao, data.honorario, data.inerentes,
+    data.licenciamento, data.declaracao_valor, data.modelo0
   ]);
 
   const handleChange = (e) => {
@@ -148,7 +206,13 @@ export default function FormDataCRF({ onClose, onSaved }) {
   const checkedValue = (cliente) => {
     closeClientSearchBox();
     setClientSelected(cliente.nome)
-    setData(prev => ({ ...prev, cliente_id: cliente.id, cliente: cliente.nome }))
+    setData(prev => ({
+      ...prev,
+      cliente_id: cliente.id,
+      cliente: cliente.nome,
+      cliente_nif: cliente?.nif || "",
+      cliente_endereco: cliente?.morada || cliente?.cliente_endereco || "",
+    }))
   }
 
   const handleOpenPais = () => {
@@ -168,16 +232,18 @@ export default function FormDataCRF({ onClose, onSaved }) {
   const handleSave = async (printAfter = false) => {
     try {
       setSaving(true);
-      const result = await crfApi.create(data);
+      const result = crfId ? await crfApi.update(crfId, data) : await crfApi.create(data);
+      const payload = result?.data ?? result;
+      if (payload?.numero_crf) setData((prev) => ({ ...prev, numero_crf: payload.numero_crf }));
       setAlertState({
         open: true,
         status: "success",
         title: "Sucesso",
-        message: "CRF salva com sucesso!",
+        message: crfId ? "CRF atualizada com sucesso!" : "CRF salva com sucesso!",
         onClose: () => {
           setAlertState((p) => ({ ...p, open: false }));
           if (onSaved) {
-            onSaved(result);
+            onSaved(payload);
           }
           onClose();
         }
@@ -217,10 +283,6 @@ export default function FormDataCRF({ onClose, onSaved }) {
           Cancelar
         </button>
 
-        <button className="btn btn-warning" style={{ border: "2px solid var(--primary)", color: "var(--primary)", backgroundColor: "transparent", padding: "5px 15px", borderRadius: "5px", cursor: "pointer" }}>
-          Visualizar
-        </button>
-
         <button
           onClick={handlePrintClick}
           className="btn btn-primary"
@@ -258,13 +320,13 @@ export default function FormDataCRF({ onClose, onSaved }) {
         </div>
 
         <div style={inputBoxStyle}>
-          <label>Data Entrada</label>
-          <input type="date" name="data_entrada" value={data.data_entrada} onChange={handleChange} />
+          <label>Morada do Cliente</label>
+          <input name="cliente_endereco" value={data.cliente_endereco} readOnly />
         </div>
 
         <div style={inputBoxStyle}>
-          <label>Data Pagamento</label>
-          <input type="date" name="data_pagamento" value={data.data_pagamento} onChange={handleChange} />
+          <label>Data Entrada</label>
+          <input type="date" name="data_entrada" value={data.data_entrada} onChange={handleChange} />
         </div>
 
         {/* DOCUMENTOS */}
@@ -294,8 +356,25 @@ export default function FormDataCRF({ onClose, onSaved }) {
         </div>
 
         <div style={inputBoxStyle}>
-          <label>Consignatário</label>
-          <input name="consignatario" value={data.consignatario} onChange={handleChange} />
+          <label>Via</label>
+          <select
+            name="via"
+            value={data.via}
+            onChange={handleChange}
+            style={{
+              padding: "8px",
+              border: "1px solid var(--input-border)",
+              borderRadius: "var(--radius)",
+              background: "var(--input)",
+              color: "var(--text)"
+            }}
+          >
+            <option value="">Selecione</option>
+            <option value="RODOVIÁRIO">RODOVIÁRIO</option>
+            <option value="FERROVIÁRIO">FERROVIÁRIO</option>
+            <option value="MARÍTIMA">MARÍTIMA</option>
+            <option value="AÉREA">AÉREA</option>
+          </select>
         </div>
 
         <div style={{ ...inputBoxStyle, display: "flex", flexDirection: "column", gap: "5px" }}>
@@ -407,6 +486,21 @@ export default function FormDataCRF({ onClose, onSaved }) {
         </div>
 
         <div style={inputBoxStyle}>
+          <label>EP 15</label>
+          <input type="number" name="ep_15" value={data.ep_15} onChange={handleChange} />
+        </div>
+
+        <div style={inputBoxStyle}>
+          <label>EP 14</label>
+          <input type="number" name="ep_14" value={data.ep_14} onChange={handleChange} />
+        </div>
+
+        <div style={inputBoxStyle}>
+          <label>Serviço Transitário</label>
+          <input type="number" name="servico_transitario" value={data.servico_transitario} onChange={handleChange} />
+        </div>
+
+        <div style={inputBoxStyle}>
           <label>Veterinário / Saúde</label>
           <input type="number" name="veterinario_saude" value={data.veterinario_saude} onChange={handleChange} />
         </div>
@@ -452,16 +546,6 @@ export default function FormDataCRF({ onClose, onSaved }) {
         </div>
 
         <div style={inputBoxStyle}>
-          <label>Fotocópias</label>
-          <input type="number" name="fotocopias" value={data.fotocopias} onChange={handleChange} />
-        </div>
-
-        <div style={inputBoxStyle}>
-          <label>Continuacoes/Adições</label>
-          <input type="number" name="continuacoes_adicoes" value={data.continuacoes_adicoes} onChange={handleChange} />
-        </div>
-
-        <div style={inputBoxStyle}>
           <label>Total Emolumentos (Auto)</label>
           <input value={data.t_emolument} readOnly style={{ backgroundColor: '#f0f0f0' }} />
         </div>
@@ -478,7 +562,7 @@ export default function FormDataCRF({ onClose, onSaved }) {
 
         <div style={inputBoxStyle}>
           <label>Moeda</label>
-          <input name="moeda_id" value={data.moeda_id} onChange={handleChange} placeholder="Ex: USD, EUR, AOA" />
+          <input name="moeda" value={data.moeda} onChange={handleChange} placeholder="Ex: USD, EUR" />
         </div>
 
         <div style={inputBoxStyle}>
@@ -566,7 +650,7 @@ export default function FormDataCRF({ onClose, onSaved }) {
       </Dialog>
 
       {/* PRINT SHEET COMPONENT */}
-      <SheetCrf data={data} />
+      {/* <SheetCrf data={data} /> */}
 
       {alertState.open === true && (
         <Alert

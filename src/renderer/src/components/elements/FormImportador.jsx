@@ -46,10 +46,10 @@ export default function FormImportador({ onClose, onSaved, importador }) {
       let res;
       if (importador) {
         res = await api.update(importador.id, payload);
-        setAlertState({ open: true, status: "success", title: "Sucesso", message: "Importador atualizado com sucesso" });
+        setAlertState({ open: true, status: "success", title: "Sucesso", message: "Cliente atualizado com sucesso" });
       } else {
         res = await api.create(payload);
-        setAlertState({ open: true, status: "success", title: "Sucesso", message: "Importador criado com sucesso" });
+        setAlertState({ open: true, status: "success", title: "Sucesso", message: "Cliente criado com sucesso" });
       }
 
       setTimeout(() => {
@@ -58,7 +58,7 @@ export default function FormImportador({ onClose, onSaved, importador }) {
         onClose?.();
       }, 1200);
     } catch (error) {
-      setAlertState({ open: true, status: "error", title: "Erro", message: error.message || "Falha ao salvar importador" });
+      setAlertState({ open: true, status: "error", title: "Erro", message: error.message || "Falha ao salvar cliente" });
       setTimeout(() => setAlertState((p) => ({ ...p, open: false })), 1800);
     } finally {
       setSaving(false);
@@ -84,7 +84,7 @@ export default function FormImportador({ onClose, onSaved, importador }) {
           name="codigo"
           value={data.codigo}
           onChange={handleChange}
-          placeholder="Código do importador"
+          placeholder="Código do cliente"
           style={{
             padding: "6px 10px",
             border: "1px solid var(--input-border)",
@@ -100,7 +100,7 @@ export default function FormImportador({ onClose, onSaved, importador }) {
           name="nome"
           value={data.nome}
           onChange={handleChange}
-          placeholder="Nome do importador"
+          placeholder="Nome do cliente"
           required
           style={{
             padding: "6px 10px",

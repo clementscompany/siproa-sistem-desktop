@@ -115,27 +115,6 @@ export default function SearchBoxPaises({ isOpen, checkedValue, onClose }) {
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
-                  <img
-                    src={pais.flags?.png || pais.flags?.svg || `https://flagcdn.com/w320/${pais.cca2?.toLowerCase()}.png`}
-                    alt={pais.flags?.alt || pais.name?.common || "Bandeira"}
-                    onError={(e) => {
-                      // Tentar SVG se PNG falhar
-                      if (e.target.src.includes('.png')) {
-                        e.target.src = pais.flags?.svg || `https://flagcdn.com/${pais.cca2?.toLowerCase()}.svg`;
-                      } else {
-                        e.target.style.display = "none";
-                      }
-                    }}
-                    style={{
-                      width: "32px",
-                      height: "24px",
-                      objectFit: "cover",
-                      borderRadius: "3px",
-                      border: "1px solid #ddd",
-                      flexShrink: 0,
-                      backgroundColor: "#f0f0f0",
-                    }}
-                  />
                   <div style={{ display: "flex", flexDirection: "column" }}>
                     <span style={{ fontWeight: 500, fontSize: "14px" }}>{pais.name?.common || "N/A"}</span>
                     <span style={{ fontSize: "12px", color: "#666" }}>{pais.cca2 || ""}</span>
@@ -154,4 +133,3 @@ export default function SearchBoxPaises({ isOpen, checkedValue, onClose }) {
     </Dialog>
   );
 }
-

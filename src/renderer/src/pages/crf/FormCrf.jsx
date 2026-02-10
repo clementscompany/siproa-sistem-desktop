@@ -1,8 +1,7 @@
 import { Dialog, DialogContent } from "@mui/material";
 import FormDataCRF from "../../components/elements/FormCrf";
-import { useState } from "react";
 
-export default function FormCRF({ isOpen, onClose }) {
+export default function FormCRF({ isOpen, onClose, onSaved }) {
   return (
     <Dialog open={isOpen} maxWidth="xl" fullWidth >
       <DialogContent sx={{ maxWidth: "100%", maxHeight: "80%" }}>
@@ -10,7 +9,7 @@ export default function FormCRF({ isOpen, onClose }) {
           <span> Nova Requisição</span>
         </div>
 
-        <FormDataCRF onClose={onClose} />
+        <FormDataCRF onClose={onClose} onSaved={onSaved} />
       </DialogContent>
     </Dialog>
   )

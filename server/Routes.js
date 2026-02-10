@@ -4,6 +4,7 @@ import AdminController from "./controllers/auth/admin.controller.js";
 import dashboardController from "./controllers/dashboard/dashboard.controller.js";
 import CrfController from "./controllers/crf/crf.controller.js";
 import ClientController from "./controllers/clients/clients.controller.js";
+import { upload } from "./middlewares/upload.js";
 
 const Route = express.Router();
 
@@ -14,6 +15,9 @@ Route.get("/", (req, res) => {
 Route.get("/getconfig", AppController.getConfig);
 Route.get("/getpassword", AdminController.getPassordAdmin);
 Route.post("/saveconfig", AppController.saveConfig);
+Route.put("/updateconfig", AppController.updateConfig);
+Route.get("/getlogo", AppController.getLogo);
+Route.post("/savelogo", upload.single("imagem"), AppController.saveLogo);
 Route.post("/setpassword", AdminController.setPasswordAdmin);
 Route.post("/loginadmin", AdminController.loginAdmin);
 Route.get("/dashboard/stats", dashboardController.getStats);

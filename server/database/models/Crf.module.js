@@ -9,21 +9,25 @@ class CrfModule {
                importadores.nif as cliente_nif,
                importadores.morada as cliente_endereco,
                importadores.telefone as cliente_telefone,
-               vias.nome as via_nome,
-               paises.nome as origem_nome,
-               moedas.nome as moeda_nome,
-               moedas.sigla as moeda_sigla
+               vias.nome as via_antiga,
+               paises.nome as origem_nome
         FROM crf 
         LEFT JOIN importadores ON crf.cliente_id = importadores.id 
         LEFT JOIN vias ON crf.via_id = vias.id
         LEFT JOIN paises ON crf.pais_id = paises.id
-        LEFT JOIN moedas ON crf.moeda_id = moedas.id
         WHERE crf.active = 1
         ORDER BY crf.id DESC
       `;
       DB.all(query, (err, rows) => {
         if (err) reject(err);
-        else resolve(rows);
+        else {
+          // Mapeia para garantir que 'via' tenha valor (novo ou antigo)
+          const result = rows.map((row) => ({
+            ...row,
+            via: row.via || row.via_antiga,
+          }));
+          resolve(result);
+        }
       });
     });
   }
@@ -36,20 +40,22 @@ class CrfModule {
                importadores.nif as cliente_nif,
                importadores.morada as cliente_endereco,
                importadores.telefone as cliente_telefone,
-               vias.nome as via_nome,
-               paises.nome as origem_nome,
-               moedas.nome as moeda_nome,
-               moedas.sigla as moeda_sigla
+               vias.nome as via_antiga,
+               paises.nome as origem_nome
         FROM crf 
         LEFT JOIN importadores ON crf.cliente_id = importadores.id 
         LEFT JOIN vias ON crf.via_id = vias.id
         LEFT JOIN paises ON crf.pais_id = paises.id
-        LEFT JOIN moedas ON crf.moeda_id = moedas.id
         WHERE crf.id = ?
       `;
       DB.get(query, [id], (err, row) => {
         if (err) reject(err);
-        else resolve(row);
+        else {
+          if (row) {
+            row.via = row.via || row.via_antiga;
+          }
+          resolve(row);
+        }
       });
     });
   }
@@ -68,26 +74,27 @@ class CrfModule {
             du_numero, bl_numero, c_marca, crf_ou_f, factura,
             fob, frete, seguro, cif,
             imposto_s_impo, iva, imposto_selo, sobre_taxa, emolumentos_gerais, multas_crf, subtotal,
-            ep17, veterinario_saude, validacao_bl, assistencia, deslocacao, honorario, inerentes,
+            ep17, ep_15, ep_14, servico_transitario, veterinario_saude, validacao_bl, assistencia, deslocacao, honorario, inerentes,
             licenciamento, declaracao_valor, modelo0, fotocopias, continuacoes_adicoes,
             t_emolument, total_geral, total_por_extenso,
-            consignatario, pais_id, moeda_id, cambio, cambio_usd, valor_aduaneiro, designacao,
+            consignatario, via, pais_id, moeda, cambio, cambio_usd, valor_aduaneiro, designacao,
             observacoes, estado_pagamento, referencia_bancaria
           ) VALUES (
             ?, ?, ?, ?, ?, ?,
             ?, ?, ?, ?, ?,
             ?, ?, ?, ?,
             ?, ?, ?, ?, ?, ?, ?,
-            ?, ?, ?, ?, ?, ?, ?,
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
             ?, ?, ?, ?, ?, ?,
             ?, ?, ?,
-            ?, ?, ?, ?, ?, ?, ?,
+            ?, ?, ?, ?, ?, ?, ?, ?,
             ?, ?
           )
         `;
 
+        const numeroCrfFinal = data.numero_crf || `CRF-${Date.now()}`;
         const params = [
-          data.numero_crf || `CRF-${Date.now()}`,
+          numeroCrfFinal,
           data.req_f || null,
           data.cliente_id || null,
           data.cliente || null,
@@ -110,6 +117,9 @@ class CrfModule {
           parseFloat(data.multas_crf) || 0,
           parseFloat(data.subtotal) || 0,
           parseFloat(data.ep17) || 0,
+          parseFloat(data.ep_15) || 0,
+          parseFloat(data.ep_14) || 0,
+          parseFloat(data.servico_transitario) || 0,
           parseFloat(data.veterinario_saude) || 0,
           parseFloat(data.validacao_bl) || 0,
           parseFloat(data.assistencia) || 0,
@@ -125,8 +135,9 @@ class CrfModule {
           parseFloat(data.total_geral) || 0,
           data.total_por_extenso || null,
           data.consignatario || null,
+          data.via || null,
           paisIdFinal || null,
-          data.moeda_id || null,
+          data.moeda || null,
           parseFloat(data.cambio) || 1,
           parseFloat(data.cambio_usd) || 1,
           parseFloat(data.valor_aduaneiro) || 0,
@@ -144,7 +155,7 @@ class CrfModule {
             console.error("Params:", params);
             reject(err);
           } else {
-            resolve({ id: this.lastID, ...data });
+            resolve({ id: this.lastID, ...data, numero_crf: numeroCrfFinal });
           }
         });
       };
@@ -179,13 +190,104 @@ class CrfModule {
   }
 
   async update(id, data) {
-    // Simplified update - normally would include all fields
     return new Promise((resolve, reject) => {
-      const query = `UPDATE crf SET req_f = ?, total_geral = ? WHERE id = ?`;
-      DB.run(query, [data.req_f, data.total_geral, id], function (err) {
-        if (err) reject(err);
-        else resolve({ affected: this.changes });
-      });
+      const query = `
+        UPDATE crf SET 
+          req_f = ?, cliente_id = ?, cliente_nome = ?, data_entrada = ?, data_pagamento = ?,
+          du_numero = ?, bl_numero = ?, c_marca = ?, crf_ou_f = ?, factura = ?,
+          fob = ?, frete = ?, seguro = ?, cif = ?,
+          imposto_s_impo = ?, iva = ?, imposto_selo = ?, sobre_taxa = ?, emolumentos_gerais = ?, multas_crf = ?, subtotal = ?,
+          ep17 = ?, ep_15 = ?, ep_14 = ?, servico_transitario = ?, veterinario_saude = ?, validacao_bl = ?, assistencia = ?, deslocacao = ?, honorario = ?, inerentes = ?,
+          licenciamento = ?, declaracao_valor = ?, modelo0 = ?, fotocopias = ?, continuacoes_adicoes = ?,
+          t_emolument = ?, total_geral = ?, total_por_extenso = ?,
+          consignatario = ?, via = ?, pais_id = ?, moeda = ?, cambio = ?, cambio_usd = ?, valor_aduaneiro = ?, designacao = ?,
+          observacoes = ?, estado_pagamento = ?, referencia_bancaria = ?
+        WHERE id = ?
+      `;
+
+      const runUpdate = (paisIdFinal) => {
+        const params = [
+          data.req_f || null,
+          data.cliente_id || null,
+          data.cliente || null,
+          data.data_entrada || null,
+          data.data_pagamento || null,
+          data.du_numero || null,
+          data.bl_numero || null,
+          data.c_marca || null,
+          data.crf_ou_f || null,
+          data.factura || null,
+          parseFloat(data.fob) || 0,
+          parseFloat(data.frete) || 0,
+          parseFloat(data.seguro) || 0,
+          parseFloat(data.cif) || 0,
+          parseFloat(data.imposto_s_impo) || 0,
+          parseFloat(data.iva) || 0,
+          parseFloat(data.imposto_selo) || 0,
+          parseFloat(data.sobre_taxa) || 0,
+          parseFloat(data.emolumentos_gerais) || 0,
+          parseFloat(data.multas_crf) || 0,
+          parseFloat(data.subtotal) || 0,
+          parseFloat(data.ep17) || 0,
+          parseFloat(data.ep_15) || 0,
+          parseFloat(data.ep_14) || 0,
+          parseFloat(data.servico_transitario) || 0,
+          parseFloat(data.veterinario_saude) || 0,
+          parseFloat(data.validacao_bl) || 0,
+          parseFloat(data.assistencia) || 0,
+          parseFloat(data.deslocacao) || 0,
+          parseFloat(data.honorario) || 0,
+          parseFloat(data.inerentes) || 0,
+          parseFloat(data.licenciamento) || 0,
+          parseFloat(data.declaracao_valor) || 0,
+          parseFloat(data.modelo0) || 0,
+          parseFloat(data.fotocopias) || 0,
+          parseFloat(data.continuacoes_adicoes) || 0,
+          parseFloat(data.t_emolument) || 0,
+          parseFloat(data.total_geral) || 0,
+          data.total_por_extenso || null,
+          data.consignatario || null,
+          data.via || null,
+          paisIdFinal,
+          data.moeda || null,
+          parseFloat(data.cambio) || 1,
+          parseFloat(data.cambio_usd) || 1,
+          parseFloat(data.valor_aduaneiro) || 0,
+          data.designacao || null,
+          data.observacoes || null,
+          data.estado_pagamento || "PENDENTE",
+          data.referencia_bancaria || null,
+          id,
+        ];
+
+        DB.run(query, params, function (err) {
+          if (err) reject(err);
+          else resolve({ affected: this.changes });
+        });
+      };
+
+      if (typeof data.pais_id === "number") return runUpdate(data.pais_id);
+
+      if (typeof data.pais_id === "string") {
+        const trimmed = data.pais_id.trim();
+        if (!trimmed) return runUpdate(null);
+
+        if (/^\d+$/.test(trimmed)) return runUpdate(parseInt(trimmed, 10));
+
+        if (trimmed.length <= 3) {
+          DB.get(
+            `SELECT id FROM paises WHERE codigo = ? LIMIT 1`,
+            [trimmed],
+            (err, row) => {
+              if (!err && row) return runUpdate(row.id);
+              return runUpdate(null);
+            },
+          );
+          return;
+        }
+      }
+
+      return runUpdate(null);
     });
   }
 

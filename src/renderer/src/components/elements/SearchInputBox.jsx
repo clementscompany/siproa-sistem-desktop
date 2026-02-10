@@ -1,7 +1,7 @@
 import { Dialog, Button, IconButton } from "@mui/material";
 import { useState } from "react";
 import "./style.css";
-import FormImportadorDialog from "../../pages/importadores/FormImportador";
+import FormClienteDialog from "../../pages/importadores/FormImportador";
 
 export default function SearchBoxForm({ isOpen, checkedValue, onClose, data = [], onClientSaved }) {
   const [openFormImportador, setOpenFormImportador] = useState(false);
@@ -11,9 +11,17 @@ export default function SearchBoxForm({ isOpen, checkedValue, onClose, data = []
     if (onClientSaved) {
       onClientSaved(newImportador);
     }
+
     // Auto-select the newly created importador
     if (newImportador && checkedValue) {
-      checkedValue({ nome: newImportador.nome, id: newImportador.id });
+      checkedValue({
+        id: newImportador.id,
+        nome: newImportador.nome,
+        nif: newImportador?.nif,
+        morada: newImportador?.morada,
+        telefone: newImportador?.telefone,
+        email: newImportador?.email,
+      });
     }
   };
 
@@ -90,7 +98,16 @@ export default function SearchBoxForm({ isOpen, checkedValue, onClose, data = []
                     borderBottom: "1px solid #eee",
                     cursor: "pointer",
                   }}
-                  onClick={() => checkedValue({ nome: item.nome, id: item.id })}
+                  onClick={() =>
+                    checkedValue({
+                      id: item.id,
+                      nome: item.nome,
+                      nif: item?.nif,
+                      morada: item?.morada,
+                      telefone: item?.telefone,
+                      email: item?.email,
+                    })
+                  }
                 >
                   <span>{item.nome}</span>
                   <i className="bi bi-chevron-right" style={{ color: "#999" }}></i>
@@ -105,7 +122,7 @@ export default function SearchBoxForm({ isOpen, checkedValue, onClose, data = []
         </div>
       </Dialog>
 
-      <FormImportadorDialog
+      <FormClienteDialog
         isOpen={openFormImportador}
         onClose={() => setOpenFormImportador(false)}
         onSaved={handleImportadorSaved}

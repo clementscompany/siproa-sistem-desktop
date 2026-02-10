@@ -152,17 +152,8 @@ export const CreateTable = () => {
     `);
 
     // -------------------------------
-    // MOEDAS
+    // MOEDAS (Removido - Campo agora é texto livre em CRF)
     // -------------------------------
-    DB.run(`
-      CREATE TABLE IF NOT EXISTS moedas (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        codigo TEXT UNIQUE NOT NULL,
-        nome TEXT NOT NULL,
-        sigla TEXT,
-        active INTEGER DEFAULT 1
-      );
-    `);
 
     // -------------------------------
     // VIAS
@@ -316,7 +307,7 @@ export const CreateTable = () => {
         cif REAL DEFAULT 0,
         consignatario TEXT,
         pais_id INTEGER,
-        moeda_id INTEGER,
+        moeda TEXT,
         cambio REAL DEFAULT 1,
         cambio_usd REAL DEFAULT 1,
         valor_aduaneiro REAL DEFAULT 0,
@@ -329,6 +320,9 @@ export const CreateTable = () => {
         multas_crf REAL DEFAULT 0,
         subtotal REAL DEFAULT 0,
         ep17 REAL DEFAULT 0,
+        ep_15 REAL DEFAULT 0,
+        ep_14 REAL DEFAULT 0,
+        servico_transitario REAL DEFAULT 0,
         veterinario_saude REAL DEFAULT 0,
         validacao_bl INTEGER DEFAULT 0,
         assistencia REAL DEFAULT 0,
@@ -354,7 +348,6 @@ export const CreateTable = () => {
         FOREIGN KEY (cliente_id) REFERENCES importadores(id) ON DELETE SET NULL,
         FOREIGN KEY (via_id) REFERENCES vias(id) ON DELETE SET NULL,
         FOREIGN KEY (pais_id) REFERENCES paises(id) ON DELETE SET NULL,
-        FOREIGN KEY (moeda_id) REFERENCES moedas(id) ON DELETE SET NULL,
         FOREIGN KEY (tipo_cliente_id) REFERENCES tipos_clientes(id) ON DELETE SET NULL,
         FOREIGN KEY (conta_id) REFERENCES contas(id) ON DELETE SET NULL
       );
@@ -366,6 +359,26 @@ export const CreateTable = () => {
       `CREATE INDEX IF NOT EXISTS idx_crf_estado ON crf(estado_pagamento);`,
     );
     DB.run(`CREATE INDEX IF NOT EXISTS idx_crf_conta ON crf(conta_id);`);
+
+    // Migração Manual: Tentar adicionar colunas se não existirem
+    const colunasParaAdicionar = [
+      "ALTER TABLE crf ADD COLUMN ep_15 REAL DEFAULT 0;",
+      "ALTER TABLE crf ADD COLUMN ep_14 REAL DEFAULT 0;",
+      "ALTER TABLE crf ADD COLUMN servico_transitario REAL DEFAULT 0;",
+      "ALTER TABLE crf ADD COLUMN via TEXT;",
+    ];
+
+    colunasParaAdicionar.forEach((sql) => {
+      DB.run(sql, (err) => {
+        // Ignorar erro se coluna já existe (duplicate column name)
+        if (err && !err.message.includes("duplicate column name")) {
+          console.log(
+            "Info/Erro ao adicionar coluna (pode já existir):",
+            err.message,
+          );
+        }
+      });
+    });
 
     // -------------------------------
     // CRF ITENS
@@ -406,11 +419,23 @@ export const CreateTable = () => {
       );
     `);
 
+    // -------------------------------
+    // LOGO APP
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS logo_app (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        imagem TEXT,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     // Reativa foreign keys
     DB.run(`PRAGMA foreign_keys = ON;`);
 
     console.log(
-      "Banco de dados DU criado com sucesso (todas as tabelas exceto config)!",
+      "Banco de dados DU criado com sucesso (todas as tabelas incluindo config e logo_app)!",
     );
   });
 };

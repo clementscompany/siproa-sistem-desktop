@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./style.css";
 import logo from "../../assets/img/logo.jpg";
 
-export default function Menu({ path }) {
+export default function Menu() {
   const navigate = useNavigate();
+  const location = useLocation();   
+  const path = location.pathname;  // ex: /home, /crf, /clientes
+
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
   const handleToggle = (index) => {
@@ -61,12 +64,12 @@ export default function Menu({ path }) {
     },
 
     {
-      name: "Importadores",
+      name: "Clientes",
       icon: <i className="bi bi-building"></i>,
       submenu: [
-        { name: "Lista", path: "/importadores" },
-        { name: "Cadastrar", path: "/importadores/cadastrar" },
-        { name: "Documentação", path: "/importadores/docs" },
+        { name: "Lista", path: "/clientes" },
+        { name: "Cadastrar", path: "/clientes/cadastrar" },
+        { name: "Documentação", path: "/clientes/docs" },
       ],
     },
 
@@ -101,47 +104,58 @@ export default function Menu({ path }) {
       </div>
 
       <ul>
-        {dataPath.map((item, index) => (
-          <li
-            key={index}
-            className={`menu-group ${path === item.path ? "active" : ""} ${openSubmenu === index ? "open" : ""
-              }`}
-          >
-            <div
-              className="menu-item"
-              onClick={() =>
-                item.submenu ? handleToggle(index) : navigate(item.path)
-              }
-            >
-              {item.icon}
-              <span>{item.name}</span>
-              {item.submenu && (
-                <i
-                  className={`bi ${openSubmenu === index ? "bi-chevron-up" : "bi-chevron-down"
-                    } arrow`}
-                ></i>
-              )}
-            </div>
+        {dataPath.map((item, index) => {
+          const isGroupActive =
+            item.path === path ||
+            item.submenu?.some((sub) => sub.path === path);
 
-            {item.submenu && (
-              <ul
-                className={`submenu ${openSubmenu === index ? "submenu-open" : ""
-                  }`}
+          return (
+            <li
+              key={index}
+              className={`menu-group ${isGroupActive ? "active" : ""} ${
+                openSubmenu === index ? "open" : ""
+              }`}
+            >
+              <div
+                className="menu-item"
+                onClick={() =>
+                  item.submenu ? handleToggle(index) : navigate(item.path)
+                }
               >
-                {item.submenu.map((sub, subIndex) => (
-                  <li
-                    key={subIndex}
-                    onClick={() => navigate(sub.path)}
-                    className={path === sub.path ? "active" : ""}
-                  >
-                    <i className="bi bi-dot"></i>
-                    <span>{sub.name}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
+                {item.icon}
+                <span>{item.name}</span>
+                {item.submenu && (
+                  <i
+                    className={`bi ${
+                      openSubmenu === index
+                        ? "bi-chevron-up"
+                        : "bi-chevron-down"
+                    } arrow`}
+                  ></i>
+                )}
+              </div>
+
+              {item.submenu && (
+                <ul
+                  className={`submenu ${
+                    openSubmenu === index ? "submenu-open" : ""
+                  }`}
+                >
+                  {item.submenu.map((sub, subIndex) => (
+                    <li
+                      key={subIndex}
+                      onClick={() => navigate(sub.path)}
+                      className={path === sub.path ? "active" : ""}
+                    >
+                      <i className="bi bi-dot"></i>
+                      <span>{sub.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

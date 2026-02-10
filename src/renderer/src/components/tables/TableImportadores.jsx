@@ -15,7 +15,7 @@ export default function TableImportadores({ onEdit }) {
       const rows = await api.getAll();
       setData(rows);
     } catch (error) {
-      setAlertState({ open: true, status: "error", title: "Erro", message: "Falha ao carregar importadores" });
+      setAlertState({ open: true, status: "error", title: "Erro", message: "Falha ao carregar clientes" });
     }
   };
 
@@ -32,11 +32,11 @@ export default function TableImportadores({ onEdit }) {
 
     try {
       await api.delete(confirmDelete.item.id);
-      setAlertState({ open: true, status: "success", title: "Sucesso", message: "Importador eliminado com sucesso" });
+      setAlertState({ open: true, status: "success", title: "Sucesso", message: "Cliente eliminado com sucesso" });
       setConfirmDelete({ open: false, item: null });
       fetchData();
     } catch (error) {
-      setAlertState({ open: true, status: "error", title: "Erro", message: "Falha ao eliminar importador" });
+      setAlertState({ open: true, status: "error", title: "Erro", message: "Falha ao eliminar cliente" });
       setConfirmDelete({ open: false, item: null });
     }
   };
@@ -72,7 +72,7 @@ export default function TableImportadores({ onEdit }) {
             {data.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} align="center" sx={{ padding: "40px", color: "#999", fontSize: "14px" }}>
-                  Nenhum importador encontrado.
+                  Nenhum cliente encontrado.
                 </TableCell>
               </TableRow>
             ) : (
@@ -141,7 +141,7 @@ export default function TableImportadores({ onEdit }) {
 
       {confirmDelete.open && confirmDelete.item && (
         <Alert
-          message={`Tem certeza que deseja eliminar o importador "${confirmDelete.item.nome}"?`}
+          message={`Tem certeza que deseja eliminar o cliente "${confirmDelete.item.nome}"?`}
           status="warring"
           title="Confirmar Eliminação"
           showCancellButton={true}

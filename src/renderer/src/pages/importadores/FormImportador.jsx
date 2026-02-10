@@ -1,13 +1,13 @@
 import { Dialog, DialogContent } from "@mui/material";
 import FormImportador from "../../components/elements/FormImportador";
 
-export default function FormImportadorDialog({ isOpen, onClose, onSaved, importador }) {
+export default function FormClienteDialog({ isOpen, onClose, onSaved, cliente }) {
   return (
     <Dialog open={isOpen} maxWidth="md" fullWidth>
       <DialogContent>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
           <span style={{ fontSize: "16px", fontWeight: 600, color: "var(--text)" }}>
-            {importador ? "Editar Importador" : "Cadastrar Importador"}
+            {cliente ? "Editar Cliente" : "Cadastrar Cliente"}
           </span>
           <button
             onClick={onClose}
@@ -24,7 +24,7 @@ export default function FormImportadorDialog({ isOpen, onClose, onSaved, importa
             Fechar
           </button>
         </div>
-        <FormImportador onClose={onClose} onSaved={onSaved} importador={importador} />
+        <FormImportador onClose={onClose} onSaved={onSaved} importador={cliente} />
       </DialogContent>
     </Dialog>
   );

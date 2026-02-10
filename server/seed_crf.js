@@ -1,54 +1,138 @@
 import { DB } from "./database/db.js";
 
-const crfs = [
-  {
-    numero_crf: "CRF-2025-001",
-    cliente_id: 1,
-    cliente_nome: "TransLog Angola", // Redundant but stored
-    req_f: "REQ-001",
-    data_entrada: "2024-12-01",
-    data_pagamento: "2024-12-10",
-    total_geral: 500000,
-    estado_pagamento: "PENDENTE",
-    active: 1,
-  },
-  {
-    numero_crf: "CRF-2025-002",
-    cliente_id: 2,
-    cliente_nome: "Global Export SA",
-    req_f: "REQ-002",
-    data_entrada: "2024-12-05",
-    data_pagamento: "2024-12-15",
-    total_geral: 750000,
-    estado_pagamento: "PAGO",
-    active: 1,
-  },
-];
+const crfTest = {
+  numero_crf: `CRF-SEED-${Date.now()}`,
+  req_f: "REQ-SEED-001",
+  cliente_id: 1,
+  cliente_nome: "Cliente Seed",
+  data_entrada: "2026-02-10",
+  data_pagamento: "2026-02-10",
+  du_numero: "DU-SEED-001",
+  bl_numero: "BL-SEED-001",
+  c_marca: "MARCA-SEED",
+  crf_ou_f: "CRF",
+  factura: "FACT-SEED-001",
+  fob: 10000,
+  frete: 500,
+  seguro: 200,
+  cif: 10700,
+  consignatario: "Consignatário Seed",
+  pais_id: null,
+  moeda: "EUR",
+  cambio: 1,
+  cambio_usd: 1,
+  valor_aduaneiro: 10700,
+  designacao: "Mercadoria Seed",
+  imposto_s_impo: 1000,
+  iva: 500,
+  imposto_selo: 100,
+  sobre_taxa: 50,
+  emolumentos_gerais: 200,
+  multas_crf: 0,
+  subtotal: 1850,
+  ep17: 100,
+  veterinario_saude: 50,
+  validacao_bl: 0,
+  assistencia: 75,
+  deslocacao: 25,
+  honorario: 150,
+  inerentes: 30,
+  licenciamento: 50,
+  declaracao_valor: 25,
+  modelo0: 15,
+  fotocopias: 10,
+  continuacoes_adicoes: 0,
+  t_emolument: 100,
+  total_geral: 2390,
+  total_por_extenso: "Dois mil e trezentos e noventa kwanzas",
+  observacoes: "CRF seed criado automaticamente",
+  estado_pagamento: "PENDENTE",
+  referencia_bancaria: "REF-SEED-001",
+  active: 1,
+};
 
 DB.serialize(() => {
   const stmt = DB.prepare(`
-    INSERT OR IGNORE INTO crf (numero_crf, cliente_id, cliente_nome, req_f, data_entrada, data_pagamento, total_geral, estado_pagamento, active)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO crf (
+      numero_crf, req_f, cliente_id, cliente_nome, data_entrada, data_pagamento,
+      du_numero, bl_numero, c_marca, crf_ou_f, factura,
+      fob, frete, seguro, cif,
+      imposto_s_impo, iva, imposto_selo, sobre_taxa, emolumentos_gerais, multas_crf, subtotal,
+      ep17, veterinario_saude, validacao_bl, assistencia, deslocacao, honorario, inerentes,
+      licenciamento, declaracao_valor, modelo0, fotocopias, continuacoes_adicoes,
+      t_emolument, total_geral, total_por_extenso,
+      consignatario, pais_id, moeda, cambio, cambio_usd, valor_aduaneiro, designacao,
+      observacoes, estado_pagamento, referencia_bancaria, active
+    ) VALUES (
+      ?, ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?,
+      ?, ?, ?, ?,
+      ?, ?, ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?, ?,
+      ?, ?, ?,
+      ?, ?, ?, ?, ?, ?, ?,
+      ?, ?, ?, ?
+    )
   `);
 
-  crfs.forEach((item) => {
-    stmt.run(
-      item.numero_crf,
-      item.cliente_id,
-      item.cliente_nome,
-      item.req_f,
-      item.data_entrada,
-      item.data_pagamento,
-      item.total_geral,
-      item.estado_pagamento,
-      item.active,
-    );
-  });
+  stmt.run(
+    crfTest.numero_crf,
+    crfTest.req_f,
+    crfTest.cliente_id,
+    crfTest.cliente_nome,
+    crfTest.data_entrada,
+    crfTest.data_pagamento,
+    crfTest.du_numero,
+    crfTest.bl_numero,
+    crfTest.c_marca,
+    crfTest.crf_ou_f,
+    crfTest.factura,
+    crfTest.fob,
+    crfTest.frete,
+    crfTest.seguro,
+    crfTest.cif,
+    crfTest.imposto_s_impo,
+    crfTest.iva,
+    crfTest.imposto_selo,
+    crfTest.sobre_taxa,
+    crfTest.emolumentos_gerais,
+    crfTest.multas_crf,
+    crfTest.subtotal,
+    crfTest.ep17,
+    crfTest.veterinario_saude,
+    crfTest.validacao_bl,
+    crfTest.assistencia,
+    crfTest.deslocacao,
+    crfTest.honorario,
+    crfTest.inerentes,
+    crfTest.licenciamento,
+    crfTest.declaracao_valor,
+    crfTest.modelo0,
+    crfTest.fotocopias,
+    crfTest.continuacoes_adicoes,
+    crfTest.t_emolument,
+    crfTest.total_geral,
+    crfTest.total_por_extenso,
+    crfTest.consignatario,
+    crfTest.pais_id,
+    crfTest.moeda,
+    crfTest.cambio,
+    crfTest.cambio_usd,
+    crfTest.valor_aduaneiro,
+    crfTest.designacao,
+    crfTest.observacoes,
+    crfTest.estado_pagamento,
+    crfTest.referencia_bancaria,
+    crfTest.active,
+  );
 
   stmt.finalize();
-  console.log("CRFs inseridos com sucesso!");
+  console.log("✅ CRF seed criado com sucesso!");
+  console.log("Número CRF:", crfTest.numero_crf);
 });
 
 setTimeout(() => {
   DB.close();
 }, 1000);
+

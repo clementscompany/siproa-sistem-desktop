@@ -1,3 +1,3 @@
 export const appEnv = {
-  server: "http://localhost:5001",
+  server: "http://localhost:5000",
 };

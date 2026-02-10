@@ -10,14 +10,15 @@
         default-src 'self' http://localhost:5173;
         script-src 'self' http://localhost:5173 blob:;
         worker-src 'self' blob: http://localhost:5173;
-        style-src 'self' 'unsafe-inline' http://localhost:5173;
-        img-src 'self' data: http://localhost:5173;
-        font-src 'self' data: http://localhost:5173;
+        style-src 'self' 'unsafe-inline' http://localhost:5173 https://fonts.googleapis.com;
+        img-src 'self' data: http://localhost:5173 http://localhost:5001 http://localhost:5000;
+        font-src 'self' data: http://localhost:5173 https://fonts.gstatic.com;
 
         connect-src 
           'self'
           http://localhost:5173 
           ws://localhost:5173 
+          http://localhost:5000 
           http://localhost:5001;
       "
     />

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import "./style.css"
 import { systemApi } from "../../api/System.api"
 import Alert from "../Alert/Alert"
-export default function Avatar() {
+export default function Avatar({ onClickSettings }) {
   const [user, setUser] = useState({})
   const [errorAlert, setErrorAlert] = useState({ open: false, message: "", status: "error", title: "Erro" })
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function Avatar() {
         <h4>Olá, {user?.admin_usuario ?? "Carregando..."}</h4>
         <small>Admin</small>
       </div>
-      <button className="profileButton"><i className="bi bi-gear"></i></button>
+      <button className="profileButton" onClick={onClickSettings}><i className="bi bi-gear"></i></button>
       {errorAlert.open === true && (
         <Alert message={errorAlert.message} status={errorAlert.status} title={errorAlert.title} onClose={() => setErrorAlert(prev => ({ ...prev, open: false }))} />
       )}

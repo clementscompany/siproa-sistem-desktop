@@ -8,9 +8,10 @@ class DashboardModule {
         const query = `
           SELECT
             (SELECT COUNT(*) FROM contas) AS totalContas,
-            (SELECT COUNT(*) FROM importadores) AS totalImportadores,
+            (SELECT COUNT(*) FROM importadores) AS totalClientes,
             (SELECT COUNT(*) FROM exportadores) AS totalExportadores,
             (SELECT COUNT(*) FROM transporte) AS totalTransportes,
+            (SELECT COUNT(*) FROM crf WHERE active = 1) AS totalCrf,
             (SELECT SUM(total) FROM contas) AS faturamentoTotal
         `;
         DB.all(query, (err, data) => {

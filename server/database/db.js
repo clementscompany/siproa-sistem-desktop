@@ -396,6 +396,75 @@ export const CreateTable = () => {
       );
     `);
 
+    // -------------------------------
+    // ARQUIVOS (PROCESSOS DOS CLIENTES)
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS arquivos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        cliente_id INTEGER,
+        numero_du TEXT,
+        numero_do_processo TEXT,
+        descricao_da_mercadoia TEXT,
+        situacao TEXT DEFAULT 'PENDENTE',
+        observacao TEXT,
+        doc_transporte TEXT,
+        guia_contratacao TEXT,
+        numero_lote TEXT,
+        documento_em_falta TEXT,
+        numero_de_certificado TEXT,
+        status TEXT DEFAULT 'PENDENTE',
+        emprestado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        devolucao_prevista_em TEXT,
+        prazo_dias INTEGER,
+        devolvido_em TEXT,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (cliente_id) REFERENCES importadores(id) ON DELETE SET NULL ON UPDATE CASCADE
+      );
+    `);
+
+    DB.run("ALTER TABLE arquivos ADD COLUMN numero_du TEXT", () => {});
+    DB.run("ALTER TABLE arquivos ADD COLUMN emprestado_em TEXT", () => {});
+    DB.run(
+      "ALTER TABLE arquivos ADD COLUMN devolucao_prevista_em TEXT",
+      () => {},
+    );
+    DB.run("ALTER TABLE arquivos ADD COLUMN prazo_dias INTEGER", () => {});
+    DB.run("ALTER TABLE arquivos ADD COLUMN devolvido_em TEXT", () => {});
+
+    DB.run(
+      `CREATE INDEX IF NOT EXISTS idx_arquivos_cliente ON arquivos(cliente_id);`,
+    );
+    DB.run(
+      `CREATE INDEX IF NOT EXISTS idx_arquivos_status ON arquivos(status);`,
+    );
+    DB.run(
+      `CREATE INDEX IF NOT EXISTS idx_arquivos_situacao ON arquivos(situacao);`,
+    );
+
+    // -------------------------------
+    // ANEXOS (UPLOADS POR ARQUIVO)
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS anexos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        arquivo_id INTEGER NOT NULL,
+        nome_do_arquivo TEXT NOT NULL,
+        tipo_de_arquivo TEXT,
+        caminho_do_arquivo TEXT NOT NULL,
+        tamanho_bytes INTEGER,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (arquivo_id) REFERENCES arquivos(id) ON DELETE CASCADE ON UPDATE CASCADE
+      );
+    `);
+
+    DB.run(
+      `CREATE INDEX IF NOT EXISTS idx_anexos_arquivo ON anexos(arquivo_id);`,
+    );
+
     DB.run(`
       CREATE TABLE IF NOT EXISTS config (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

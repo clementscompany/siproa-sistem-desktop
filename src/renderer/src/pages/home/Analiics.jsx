@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaUsers, FaTruck, FaBuilding, FaRegMoneyBillAlt } from "react-icons/fa";
+import { FaUsers, FaTruck, FaBuilding, FaRegMoneyBillAlt, FaUser } from "react-icons/fa";
 import "./home.css";
 import { systemApi } from "../../api/System.api";
 import Alert from "../../components/Alert/Alert";
@@ -27,11 +27,11 @@ export default function Analitics() {
           progress: result?.data?.faturamentoTotal ?? 0
         },
         {
-          title: "Total Contas",
+          title: "Total de CRF",
           icon: <FaUsers color="#2563EB" />, // azul
           color: "#2563EB",
-          value: result?.data?.totalContas ?? 0,
-          progress: result?.data?.totalContas ?? 0
+          value: result?.data?.totalCrf ?? 0,
+          progress: result?.data?.totalCrf ?? 0
         },
         {
           title: "Total Exportadores",
@@ -41,11 +41,11 @@ export default function Analitics() {
           progress: result?.data?.totalExportadores ?? 0
         },
         {
-          title: "Total Importadores",
-          icon: <FaBuilding color="#10B981" />, // verde
+          title: "Total Clientes",
+          icon: <FaUser color="#10B981" />, // verde
           color: "#10B981",
-          value: result?.data?.totalImportadores ?? 0,
-          progress: result?.data?.totalImportadores ?? 0
+          value: result?.data?.totalClientes ?? 0,
+          progress: result?.data?.totalClientes ?? 0
         },
         {
           title: "Total Transportes",

@@ -35,3 +35,24 @@ export const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: fileFilter
 });
+
+const anexoStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const arquivoId = req.params?.id ?? req.body?.arquivo_id ?? "geral";
+    const dir = path.join(uploadDir, "arquivos", String(arquivoId));
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, "anexo-" + uniqueSuffix + ext);
+  },
+});
+
+export const uploadAnexo = multer({
+  storage: anexoStorage,
+  limits: { fileSize: 25 * 1024 * 1024 },
+});

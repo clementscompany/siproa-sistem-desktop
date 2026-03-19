@@ -5,7 +5,7 @@ import logo from "../../assets/img/logo.jpg";
 
 export default function Menu() {
   const navigate = useNavigate();
-  const location = useLocation();   
+  const location = useLocation();
   const path = location.pathname;  // ex: /home, /crf, /clientes
 
   const [openSubmenu, setOpenSubmenu] = useState(null);
@@ -27,41 +27,37 @@ export default function Menu() {
       submenu: [
         { name: "Lista de CRFs", path: "/crf" },
         { name: "Nova Requisição", path: "/nova-requisicao" },
-        { name: "Aprovadas", path: "/crf/aprovadas" },
-        { name: "Pendentes", path: "/crf/pendentes" },
       ],
     },
 
-    {
-      name: "Faturas",
-      icon: <i className="bi bi-receipt"></i>,
-      submenu: [
-        { name: "Todas as Faturas", path: "/faturas" },
-        { name: "Cadastrar Fatura", path: "/faturas/nova" },
-        { name: "Pendentes", path: "/faturas/pendentes" },
-        { name: "Pagas", path: "/faturas/pagas" },
-      ],
-    },
+    // {
+    //   name: "Faturas",
+    //   icon: <i className="bi bi-receipt"></i>,
+    //   submenu: [
+    //     { name: "Todas as Faturas", path: "/faturas" },
+    //     { name: "Cadastrar Fatura", path: "/faturas/nova" },
+    //     { name: "Pendentes", path: "/faturas/pendentes" },
+    //     { name: "Pagas", path: "/faturas/pagas" },
+    //   ],
+    // },
 
     {
       name: "Arquivos",
       icon: <i className="bi bi-folder2-open"></i>,
       submenu: [
         { name: "Todos os Arquivos", path: "/arquivos" },
-        { name: "Upload de Arquivo", path: "/arquivos/upload" },
-        { name: "Categorias", path: "/arquivos/categorias" },
       ],
     },
 
-    {
-      name: "Pauta Aduaneira",
-      icon: <i className="bi bi-journal-text"></i>,
-      submenu: [
-        { name: "Consultar Pauta", path: "/pauta" },
-        { name: "Códigos SH", path: "/pauta/codigos" },
-        { name: "Taxas & Impostos", path: "/pauta/taxas" },
-      ],
-    },
+    // {
+    //   name: "Pauta Aduaneira",
+    //   icon: <i className="bi bi-journal-text"></i>,
+    //   submenu: [
+    //     { name: "Consultar Pauta", path: "/pauta" },
+    //     { name: "Códigos SH", path: "/pauta/codigos" },
+    //     { name: "Taxas & Impostos", path: "/pauta/taxas" },
+    //   ],
+    // },
 
     {
       name: "Clientes",
@@ -73,25 +69,24 @@ export default function Menu() {
       ],
     },
 
-    {
-      name: "Exportadores",
-      icon: <i className="bi bi-box-arrow-up-right"></i>,
-      submenu: [
-        { name: "Lista", path: "/exportadores" },
-        { name: "Cadastrar", path: "/exportadores/cadastrar" },
-        { name: "Documentação", path: "/exportadores/docs" },
-      ],
-    },
+    // {
+    //   name: "Exportadores",
+    //   icon: <i className="bi bi-box-arrow-up-right"></i>,
+    //   submenu: [
+    //     { name: "Lista", path: "/exportadores" },
+    //     { name: "Cadastrar", path: "/exportadores/cadastrar" },
+    //   ],
+    // },
 
-    {
-      name: "Configurações",
-      icon: <i className="bi bi-gear"></i>,
-      submenu: [
-        { name: "Usuários", path: "/settings/users" },
-        { name: "Permissões", path: "/settings/permissions" },
-        { name: "Temas", path: "/settings/themes" },
-      ],
-    },
+    // {
+    //   name: "Configurações",
+    //   icon: <i className="bi bi-gear"></i>,
+    //   submenu: [
+    //     { name: "Usuários", path: "/settings/users" },
+    //     { name: "Permissões", path: "/settings/permissions" },
+    //     { name: "Temas", path: "/settings/themes" },
+    //   ],
+    // },
   ];
 
   return (
@@ -112,9 +107,8 @@ export default function Menu() {
           return (
             <li
               key={index}
-              className={`menu-group ${isGroupActive ? "active" : ""} ${
-                openSubmenu === index ? "open" : ""
-              }`}
+              className={`menu-group ${isGroupActive ? "active" : ""} ${openSubmenu === index ? "open" : ""
+                }`}
             >
               <div
                 className="menu-item"
@@ -126,20 +120,18 @@ export default function Menu() {
                 <span>{item.name}</span>
                 {item.submenu && (
                   <i
-                    className={`bi ${
-                      openSubmenu === index
-                        ? "bi-chevron-up"
-                        : "bi-chevron-down"
-                    } arrow`}
+                    className={`bi ${openSubmenu === index
+                      ? "bi-chevron-up"
+                      : "bi-chevron-down"
+                      } arrow`}
                   ></i>
                 )}
               </div>
 
               {item.submenu && (
                 <ul
-                  className={`submenu ${
-                    openSubmenu === index ? "submenu-open" : ""
-                  }`}
+                  className={`submenu ${openSubmenu === index ? "submenu-open" : ""
+                    }`}
                 >
                   {item.submenu.map((sub, subIndex) => (
                     <li

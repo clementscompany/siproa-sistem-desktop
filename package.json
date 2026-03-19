@@ -10,6 +10,7 @@
     "format": "prettier --write .",
     "lint": "eslint --cache .",
     "test": "node --test",
+    "seed:arquivos": "node ./scripts/seed-arquivos.mjs",
     "start": "electron-vite preview",
     "dev": "electron-vite dev",
     "server": "nodemon ./server/dev/index.js",

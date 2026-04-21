@@ -34,7 +34,7 @@ export default function SearchBoxPaises({ isOpen, checkedValue, onClose }) {
 
   return (
     <Dialog open={isOpen} fullWidth maxWidth="sm">
-      <div style={{ width: "100%", padding: 16 }}>
+      <div style={{ width: "100%", padding: 16, minHeight: 500, maxHeight: 500 }}>
         {/* HEADER */}
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px", alignItems: "center" }}>
           <h3 style={{ margin: 0, color: "var(--primary)" }}>Selecionar País</h3>

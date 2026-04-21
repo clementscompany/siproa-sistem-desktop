@@ -20,7 +20,6 @@ export default function Menu() {
       icon: <i className="bi bi-speedometer2"></i>,
       path: "/home",
     },
-
     {
       name: "CRF",
       icon: <i className="bi bi-cash-stack"></i>,
@@ -48,6 +47,11 @@ export default function Menu() {
         { name: "Todos os Arquivos", path: "/arquivos" },
       ],
     },
+    {
+      name: "Processos",
+      icon: <i className="bi bi-kanban"></i>,
+      path: "/processos",
+    },
 
     // {
     //   name: "Pauta Aduaneira",
@@ -65,7 +69,6 @@ export default function Menu() {
       submenu: [
         { name: "Lista", path: "/clientes" },
         { name: "Cadastrar", path: "/clientes/cadastrar" },
-        { name: "Documentação", path: "/clientes/docs" },
       ],
     },
 
@@ -103,7 +106,6 @@ export default function Menu() {
           const isGroupActive =
             item.path === path ||
             item.submenu?.some((sub) => sub.path === path);
-
           return (
             <li
               key={index}

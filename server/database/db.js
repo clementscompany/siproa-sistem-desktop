@@ -489,12 +489,104 @@ export const CreateTable = () => {
     `);
 
     // -------------------------------
+    // MEIOS DE TRANSPORTE
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS meios_transporte (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        descricao TEXT,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // -------------------------------
+    // FORMAS DE PAGAMENTO
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS formas_pagamento (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        descricao TEXT,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // -------------------------------
+    // BANCOS
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS bancos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        codigo TEXT UNIQUE,
+        conta_numero TEXT,
+        iban TEXT,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // -------------------------------
     // LOGO APP
     // -------------------------------
     DB.run(`
       CREATE TABLE IF NOT EXISTS logo_app (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         imagem TEXT,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // -------------------------------
+    // ESTÂNCIAS
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS estancias (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        codigo TEXT,
+        localizacao TEXT,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // -------------------------------
+    // CÓDIGOS DE EXPORTADOR
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS cod_exportador (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        codigo TEXT UNIQUE NOT NULL,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // -------------------------------
+    // INE DE EXPORTADOR
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS ine_exportador (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        codigo TEXT UNIQUE NOT NULL,
+        active INTEGER DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // -------------------------------
+    // MORADAS DE EXPORTADOR
+    // -------------------------------
+    DB.run(`
+      CREATE TABLE IF NOT EXISTS moradas_exportador (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        endereco TEXT NOT NULL,
         active INTEGER DEFAULT 1,
         criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );

@@ -9,6 +9,7 @@ import NovaRequisicao from './pages/crf/NovaRequisicao';
 import EditarCrf from './pages/crf/EditarCrf';
 import ClientesPage from './pages/importadores/Importadores';
 import ARQUIVOS from './pages/arquivos/ARQUIVOS';
+import Processos from './pages/processos/Processos';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path='/importadores' element={<Layout><ClientesPage /></Layout>} />
           <Route path='/importadores/cadastrar' element={<Layout><ClientesPage /></Layout>} />
           <Route path='/arquivos' element={<Layout><ARQUIVOS /></Layout>} />
+          <Route path='/processos' element={<Layout><Processos /></Layout>} />
 
           <Route path='*' element={<Layout><HomePage /></Layout>} />
         </Routes>

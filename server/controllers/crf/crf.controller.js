@@ -13,6 +13,7 @@ class CrfController {
 
   async create(req, res) {
     try {
+
       const result = await CrfModule.create(req.body);
       res.status(201).json(result);
     } catch (error) {
@@ -39,6 +40,7 @@ class CrfController {
     try {
       const { id } = req.params;
       const result = await CrfModule.update(id, req.body);
+      console.log("Dados recebidos para criação de CRF:", req.body);
       if (!result || result.affected === 0) {
         return res.status(404).json({ error: "CRF não encontrada" });
       }

@@ -16,7 +16,6 @@ export default function Analitics() {
   const fetchData = async () => {
     try {
       const result = await api.getDashboardStats();
-      console.log(result);
 
       setData([
         {

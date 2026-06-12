@@ -118,7 +118,7 @@ export default function SheetCrf({ data, visible = true }) {
         }
 
         .row { display: flex; justify-content: space-between; }
-        .col { width: 48%; }
+        .col { width: 48%; font-size:10pt; }
         .box { padding: 6px; margin-bottom: 12px; }
         .center { text-align: center; }
         .right { text-align: right; }
@@ -167,15 +167,15 @@ export default function SheetCrf({ data, visible = true }) {
       </div>
 
       <div className="box">
-        <div className="row">
+        <div className="row" >
           <div className="col">
             <p>
               <b>Cliente / Empresa</b> {data.cliente_nome || data.cliente || ""}
             </p>
           </div>
-          <div className="col">
+          <div className="col" >
             <p>
-              <b>Req. de Fundo Nº</b> {data.req_f || ""}
+              <b>Req. de Fundo Nº</b> {data.numero_crf || ""}
             </p>
           </div>
         </div>
@@ -185,16 +185,17 @@ export default function SheetCrf({ data, visible = true }) {
             <p>
               <b>NIF da Empresa</b> {data.cliente_nif || data.nif || ""}
             </p>
-            {
-              console.log(data)
-            }
           </div>
-          <div className="col">
+          <div className="col" >
             <p>
               <b>Moeda</b> {data.moeda || ""}
             </p>
           </div>
         </div>
+
+        {
+          console.log(data)
+        }
 
         <div className="row">
           <div className="col">
@@ -202,7 +203,7 @@ export default function SheetCrf({ data, visible = true }) {
               <b>Endereço</b> {data.cliente_endereco || ""}
             </p>
           </div>
-          <div className="col">
+          <div className="col" >
             <p>
               <b>Câmbio</b> {data.cambio || ""}
             </p>
@@ -215,7 +216,7 @@ export default function SheetCrf({ data, visible = true }) {
               <b>D.U Nº</b> {data.du_numero || ""}
             </p>
           </div>
-          <div className="col">
+          <div className="col" >
             <p>
               <b>Valor Aduaneiro</b> {format(data.valor_aduaneiro)}
             </p>
@@ -228,7 +229,7 @@ export default function SheetCrf({ data, visible = true }) {
               <b>B.L Nº</b> {data.bl_numero || ""}
             </p>
           </div>
-          <div className="col">
+          <div className="col" >
             <p>
               <b>Via</b> {data.via || ""}
             </p>
@@ -241,9 +242,9 @@ export default function SheetCrf({ data, visible = true }) {
               <b>FOB</b> {format(data.fob)}
             </p>
           </div>
-          <div className="col">
+          <div className="col" >
             <p>
-              <b>Origem</b> {data.origem_nome || data.pais_nome || ""}
+              <b>País de Origem</b> {data.pais_nome || ""}
             </p>
           </div>
         </div>
@@ -254,9 +255,9 @@ export default function SheetCrf({ data, visible = true }) {
               <b>Frete</b> {format(data.frete)}
             </p>
           </div>
-          <div className="col">
+          <div className="col" >
             <p>
-              <b>Factura Nº</b> {data.factura || ""}
+              <b>Factura Nº</b> {data.crf_ou_f || ""}
             </p>
           </div>
         </div>
@@ -267,7 +268,7 @@ export default function SheetCrf({ data, visible = true }) {
               <b>Seguro</b> {format(data.seguro)}
             </p>
           </div>
-          <div className="col">
+          <div className="col" >
             <p>
               <b>C/Marca Nº</b> {data.c_marca || ""}
             </p>
@@ -280,7 +281,7 @@ export default function SheetCrf({ data, visible = true }) {
               <b>CIF</b> {format(data.cif)}
             </p>
           </div>
-          <div className="col">
+          <div className="col" >
             <p>
               <b>Data de Entrada</b> {data.data_entrada || ""}
             </p>

@@ -99,7 +99,7 @@ export default function NotaArquivo({ tipo, arquivo, responsavel }) {
             src={logo || logoDefault}
             alt="Logo"
             crossOrigin="anonymous"
-            style={{ height: 70, width: 90, objectFit: "contain" }}
+            style={{ height: 90, width: 90, objectFit: "cover" }}
           />
           <div
             style={{

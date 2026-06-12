@@ -74,12 +74,15 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
     licenciamento: 0,
     declaracao_valor: 0,
     modelo0: 0,
+    fotocopias: 0,
+    continuacoes_adicoes: 0,
     t_emolument: 0,
     total_geral: 0,
     total_por_extenso: "",
     observacoes: "",
     estado_pagamento: "PENDENTE",
     referencia_bancaria: "",
+    consignatario: "",
   });
 
   // Load importadores on mount
@@ -111,14 +114,77 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
         setClientSelected(crf.cliente_nome || crf.cliente || "Selecione");
         setPaisSelected(crf.origem_nome || crf.pais_nome || "Selecione");
 
-        setData((prev) => ({
-          ...prev,
-          ...crf,
-          cliente: crf.cliente_nome || crf.cliente || "",
-          cliente_nif: crf.cliente_nif || "",
-          cliente_endereco: crf.cliente_endereco || "",
-          pais_nome: crf.origem_nome || crf.pais_nome || "",
-        }));
+        setData((prev) => {
+          // Função para garantir que valores numéricos sejam números e não strings/null
+          const safeNum = (val) => {
+            const num = parseFloat(val);
+            return isNaN(num) ? 0 : num;
+          };
+
+          // Função para garantir que valores de texto sejam strings
+          const safeStr = (val) => val ?? "";
+
+          return {
+            ...prev,
+            // Dados básicos
+            numero_crf: safeStr(crf.numero_crf),
+            req_f: safeStr(crf.req_f),
+            cliente_id: safeStr(crf.cliente_id),
+            cliente: safeStr(crf.cliente_nome || crf.cliente),
+            cliente_nif: safeStr(crf.cliente_nif),
+            cliente_endereco: safeStr(crf.cliente_endereco),
+            data_entrada: safeStr(crf.data_entrada),
+            data_pagamento: safeStr(crf.data_pagamento),
+            du_numero: safeStr(crf.du_numero),
+            bl_numero: safeStr(crf.bl_numero),
+            c_marca: safeStr(crf.c_marca),
+            crf_ou_f: safeStr(crf.crf_ou_f),
+            factura: safeStr(crf.factura),
+            // Valores
+            fob: safeNum(crf.fob),
+            frete: safeNum(crf.frete),
+            seguro: safeNum(crf.seguro),
+            cif: safeNum(crf.cif),
+            imposto_s_impo: safeNum(crf.imposto_s_impo),
+            iva: safeNum(crf.iva),
+            imposto_selo: safeNum(crf.imposto_selo),
+            sobre_taxa: safeNum(crf.sobre_taxa),
+            emolumentos_gerais: safeNum(crf.emolumentos_gerais),
+            multas_crf: safeNum(crf.multas_crf),
+            subtotal: safeNum(crf.subtotal),
+            ep17: safeNum(crf.ep17),
+            ep_15: safeNum(crf.ep_15),
+            ep_14: safeNum(crf.ep_14),
+            servico_transitario: safeNum(crf.servico_transitario),
+            veterinario_saude: safeNum(crf.veterinario_saude),
+            validacao_bl: safeNum(crf.validacao_bl),
+            assistencia: safeNum(crf.assistencia),
+            deslocacao: safeNum(crf.deslocacao),
+            honorario: safeNum(crf.honorario),
+            inerentes: safeNum(crf.inerentes),
+            licenciamento: safeNum(crf.licenciamento),
+            declaracao_valor: safeNum(crf.declaracao_valor),
+            modelo0: safeNum(crf.modelo0),
+            fotocopias: safeNum(crf.fotocopias),
+            continuacoes_adicoes: safeNum(crf.continuacoes_adicoes),
+            t_emolument: safeNum(crf.t_emolument),
+            total_geral: safeNum(crf.total_geral),
+            total_por_extenso: safeStr(crf.total_por_extenso),
+            consignatario: safeStr(crf.consignatario),
+            via: safeStr(crf.via),
+            via_id: safeStr(crf.via_id),
+            pais_id: safeStr(crf.pais_id),
+            pais_nome: safeStr(crf.origem_nome || crf.pais_nome),
+            moeda: safeStr(crf.moeda),
+            cambio: safeNum(crf.cambio),
+            cambio_usd: safeNum(crf.cambio_usd),
+            valor_aduaneiro: safeNum(crf.valor_aduaneiro),
+            designacao: safeStr(crf.designacao),
+            observacoes: safeStr(crf.observacoes),
+            estado_pagamento: safeStr(crf.estado_pagamento || "PENDENTE"),
+            referencia_bancaria: safeStr(crf.referencia_bancaria),
+          };
+        });
       } catch (error) {
         if (cancelled) return;
         setAlertState({
@@ -141,7 +207,11 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
 
   // Calculations
   useEffect(() => {
-    const parse = (val) => parseFloat(val) || 0;
+    const parse = (val) => {
+      if (val === '' || val === null || val === undefined) return 0;
+      const num = parseFloat(val);
+      return isNaN(num) ? 0 : num;
+    };
 
     const fob = parse(data.fob);
     const frete = parse(data.frete);
@@ -232,6 +302,7 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
   const handleSave = async (printAfter = false) => {
     try {
       setSaving(true);
+
       const result = crfId ? await crfApi.update(crfId, data) : await crfApi.create(data);
       const payload = result?.data ?? result;
       if (payload?.numero_crf) setData((prev) => ({ ...prev, numero_crf: payload.numero_crf }));
@@ -306,12 +377,12 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
         {/* IDENTIFICAÇÃO */}
         <div style={inputBoxStyle}>
           <label>Nº CRF (Auto)</label>
-          <input value={data.numero_crf} placeholder="Gerado ao salvar" readOnly />
+          <input value={data.numero_crf || ''} placeholder="Gerado ao salvar" readOnly />
         </div>
 
         <div style={inputBoxStyle}>
           <label>ReqF</label>
-          <input name="req_f" value={data.req_f} onChange={handleChange} />
+          <input name="req_f" value={data.req_f || ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
@@ -321,45 +392,45 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
 
         <div style={inputBoxStyle}>
           <label>Morada do Cliente</label>
-          <input name="cliente_endereco" value={data.cliente_endereco} readOnly />
+          <input name="cliente_endereco" value={data.cliente_endereco || ''} readOnly />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Data Entrada</label>
-          <input type="date" name="data_entrada" value={data.data_entrada} onChange={handleChange} />
+          <input type="date" name="data_entrada" value={data.data_entrada || ''} onChange={handleChange} />
         </div>
 
         {/* DOCUMENTOS */}
         <div style={inputBoxStyle}>
           <label>DU Nº</label>
-          <input name="du_numero" value={data.du_numero} onChange={handleChange} />
+          <input name="du_numero" value={data.du_numero || ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>BL Nº</label>
-          <input name="bl_numero" value={data.bl_numero} onChange={handleChange} />
+          <input name="bl_numero" value={data.bl_numero || ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>C/Marca</label>
-          <input name="c_marca" value={data.c_marca} onChange={handleChange} />
+          <input name="c_marca" value={data.c_marca || ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>CRF ou</label>
-          <input name="crf_ou_f" value={data.crf_ou_f} onChange={handleChange} />
+          <input name="crf_ou_f" value={data.crf_ou_f || ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Factura Nº</label>
-          <input name="factura" value={data.factura} onChange={handleChange} />
+          <input name="factura" value={data.factura || ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Via</label>
           <select
             name="via"
-            value={data.via}
+            value={data.via || ''}
             onChange={handleChange}
             style={{
               padding: "8px",
@@ -378,10 +449,12 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
         </div>
 
         <div style={{ ...inputBoxStyle, display: "flex", flexDirection: "column", gap: "5px" }}>
-          <label>País</label>
+          <label>País de origem</label>
           <div style={{ display: "flex", alignItems: "stretch", gap: "5px" }}>
+
             <input
               name="pais"
+              placeholder="Angola, Portugal, Brasil..."
               value={paisSelected}
               onClick={handleOpenPais}
               readOnly
@@ -419,165 +492,165 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
 
         <div style={inputBoxStyle}>
           <label>Designação</label>
-          <input name="designacao" value={data.designacao} onChange={handleChange} />
+          <input name="designacao" value={data.designacao || ''} onChange={handleChange} />
         </div>
 
         {/* VALORES BASE */}
         <div style={inputBoxStyle}>
           <label>FOB</label>
-          <input type="number" name="fob" value={data.fob} onChange={handleChange} />
+          <input type="number" name="fob" value={data.fob ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Frete</label>
-          <input type="number" name="frete" value={data.frete} onChange={handleChange} />
+          <input type="number" name="frete" value={data.frete ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Seguro</label>
-          <input type="number" name="seguro" value={data.seguro} onChange={handleChange} />
+          <input type="number" name="seguro" value={data.seguro ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>CIF (Auto)</label>
-          <input value={data.cif} readOnly style={{ backgroundColor: '#f0f0f0' }} />
+          <input value={data.cif ?? ''} readOnly style={{ backgroundColor: '#f0f0f0' }} />
         </div>
 
         {/* TAXAS */}
         <div style={inputBoxStyle}>
           <label>Imposto</label>
-          <input type="number" name="imposto_s_impo" value={data.imposto_s_impo} onChange={handleChange} />
+          <input type="number" name="imposto_s_impo" value={data.imposto_s_impo ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>IVA</label>
-          <input type="number" name="iva" value={data.iva} onChange={handleChange} />
+          <input type="number" name="iva" value={data.iva ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Imposto Selo</label>
-          <input type="number" name="imposto_selo" value={data.imposto_selo} onChange={handleChange} />
+          <input type="number" name="imposto_selo" value={data.imposto_selo ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Sobre Taxa</label>
-          <input type="number" name="sobre_taxa" value={data.sobre_taxa} onChange={handleChange} />
+          <input type="number" name="sobre_taxa" value={data.sobre_taxa ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Emolumentos Gerais</label>
-          <input type="number" name="emolumentos_gerais" value={data.emolumentos_gerais} onChange={handleChange} />
+          <input type="number" name="emolumentos_gerais" value={data.emolumentos_gerais ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Multas CRF / Atraso</label>
-          <input type="number" name="multas_crf" value={data.multas_crf} onChange={handleChange} />
+          <input type="number" name="multas_crf" value={data.multas_crf ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Sub Total (Auto)</label>
-          <input value={data.subtotal} readOnly style={{ backgroundColor: '#f0f0f0' }} />
+          <input value={data.subtotal ?? ''} readOnly style={{ backgroundColor: '#f0f0f0' }} />
         </div>
 
         {/* SERVIÇOS */}
         <div style={inputBoxStyle}>
           <label>EP 17</label>
-          <input type="number" name="ep17" value={data.ep17} onChange={handleChange} />
+          <input type="number" name="ep17" value={data.ep17 ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>EP 15</label>
-          <input type="number" name="ep_15" value={data.ep_15} onChange={handleChange} />
+          <input type="number" name="ep_15" value={data.ep_15 ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>EP 14</label>
-          <input type="number" name="ep_14" value={data.ep_14} onChange={handleChange} />
+          <input type="number" name="ep_14" value={data.ep_14 ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Serviço Transitário</label>
-          <input type="number" name="servico_transitario" value={data.servico_transitario} onChange={handleChange} />
+          <input type="number" name="servico_transitario" value={data.servico_transitario ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Veterinário / Saúde</label>
-          <input type="number" name="veterinario_saude" value={data.veterinario_saude} onChange={handleChange} />
+          <input type="number" name="veterinario_saude" value={data.veterinario_saude ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Validação BL</label>
-          <input type="number" name="validacao_bl" value={data.validacao_bl} onChange={handleChange} />
+          <input type="number" name="validacao_bl" value={data.validacao_bl ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Assistência</label>
-          <input type="number" name="assistencia" value={data.assistencia} onChange={handleChange} />
+          <input type="number" name="assistencia" value={data.assistencia ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Deslocação</label>
-          <input type="number" name="deslocacao" value={data.deslocacao} onChange={handleChange} />
+          <input type="number" name="deslocacao" value={data.deslocacao ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Honorário</label>
-          <input type="number" name="honorario" value={data.honorario} onChange={handleChange} />
+          <input type="number" name="honorario" value={data.honorario ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Inerentes</label>
-          <input type="number" name="inerentes" value={data.inerentes} onChange={handleChange} />
+          <input type="number" name="inerentes" value={data.inerentes ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Licenciamento</label>
-          <input type="number" name="licenciamento" value={data.licenciamento} onChange={handleChange} />
+          <input type="number" name="licenciamento" value={data.licenciamento ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Declaração de Valor</label>
-          <input type="number" name="declaracao_valor" value={data.declaracao_valor} onChange={handleChange} />
+          <input type="number" name="declaracao_valor" value={data.declaracao_valor ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Modelo O</label>
-          <input type="number" name="modelo0" value={data.modelo0} onChange={handleChange} />
+          <input type="number" name="modelo0" value={data.modelo0 ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Total Emolumentos (Auto)</label>
-          <input value={data.t_emolument} readOnly style={{ backgroundColor: '#f0f0f0' }} />
+          <input value={data.t_emolument ?? ''} readOnly style={{ backgroundColor: '#f0f0f0' }} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Total Geral (Auto)</label>
-          <input value={data.total_geral} readOnly style={{ backgroundColor: '#f0f0f0', fontWeight: 'bold' }} />
+          <input value={data.total_geral ?? ''} readOnly style={{ backgroundColor: '#f0f0f0', fontWeight: 'bold' }} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Valor Aduaneiro</label>
-          <input type="number" name="valor_aduaneiro" value={data.valor_aduaneiro} onChange={handleChange} />
+          <input type="number" name="valor_aduaneiro" value={data.valor_aduaneiro ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Moeda</label>
-          <input name="moeda" value={data.moeda} onChange={handleChange} placeholder="Ex: USD, EUR" />
+          <input name="moeda" value={data.moeda || ''} onChange={handleChange} placeholder="Ex: USD, EUR" />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Câmbio</label>
-          <input type="number" step="0.0001" name="cambio" value={data.cambio} onChange={handleChange} />
+          <input type="number" step="0.0001" name="cambio" value={data.cambio ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Câmbio USD</label>
-          <input type="number" step="0.0001" name="cambio_usd" value={data.cambio_usd} onChange={handleChange} />
+          <input type="number" step="0.0001" name="cambio_usd" value={data.cambio_usd ?? ''} onChange={handleChange} />
         </div>
 
         <div style={inputBoxStyle}>
           <label>Estado Pagamento</label>
-          <select name="estado_pagamento" value={data.estado_pagamento} onChange={handleChange}>
+          <select name="estado_pagamento" value={data.estado_pagamento || 'PENDENTE'} onChange={handleChange}>
             <option value="PENDENTE">Pendente</option>
             <option value="PAGO">Pago</option>
             <option value="CANCELADO">Cancelado</option>
@@ -586,7 +659,7 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
 
         <div style={inputBoxStyle}>
           <label>Referência Bancária</label>
-          <input name="referencia_bancaria" value={data.referencia_bancaria} onChange={handleChange} />
+          <input name="referencia_bancaria" value={data.referencia_bancaria || ''} onChange={handleChange} />
         </div>
 
         {/* TEXTO */}
@@ -595,7 +668,7 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
           <textarea
             rows={2}
             name="total_por_extenso"
-            value={data.total_por_extenso}
+            value={data.total_por_extenso || ''}
             onChange={handleChange}
           />
         </div>
@@ -605,7 +678,7 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
           <textarea
             rows={3}
             name="observacoes"
-            value={data.observacoes}
+            value={data.observacoes || ''}
             onChange={handleChange}
             placeholder="Observações adicionais..."
           />

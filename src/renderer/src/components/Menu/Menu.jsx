@@ -68,7 +68,6 @@ export default function Menu() {
       icon: <i className="bi bi-building"></i>,
       submenu: [
         { name: "Lista", path: "/clientes" },
-        { name: "Cadastrar", path: "/clientes/cadastrar" },
       ],
     },
 

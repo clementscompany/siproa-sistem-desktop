@@ -6,16 +6,29 @@ import { MiniSpinner } from "../../components/spinner/apinner";
 
 export default function BackupPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [toast, setToast] = useState(null);
+
   const navigate = useNavigate();
 
+  const showToast = (type, message) => {
+    setToast({ type, message });
+
+    setTimeout(() => {
+      setToast(null);
+    }, 3000);
+  };
+
+  /* =========================
+     EXPORT
+  ========================= */
   const getBackup = async () => {
     try {
       setIsLoading(true);
+
       const response = await fetch(`${appEnv.server}/backup/export`);
 
       if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || "Erro ao exportar backup");
+        throw new Error(await response.text());
       }
 
       const blob = await response.blob();
@@ -24,22 +37,20 @@ export default function BackupPage() {
       const a = document.createElement("a");
       a.href = url;
       a.download = "backup.json";
-
-      document.body.appendChild(a);
       a.click();
-      a.remove();
 
       window.URL.revokeObjectURL(url);
+
+      showToast("success", "Backup exportado com sucesso");
     } catch (error) {
-      console.error(error);
-      alert(error.message);
+      showToast("error", error.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   /* =========================
-     IMPORT BACKUP
+     IMPORT
   ========================= */
   const importBackup = async (e) => {
     e.preventDefault();
@@ -47,11 +58,11 @@ export default function BackupPage() {
     try {
       setIsLoading(true);
 
-      const formData = new FormData(e.currentTarget); // 🔥 FIX PRINCIPAL
+      const formData = new FormData(e.currentTarget);
       const file = formData.get("backup");
 
-      if (!file || file.size === 0) {
-        throw new Error("Selecione um arquivo válido");
+      if (!file) {
+        throw new Error("Selecione um ficheiro de backup");
       }
 
       const response = await fetch(`${appEnv.server}/backup/import`, {
@@ -59,20 +70,19 @@ export default function BackupPage() {
         body: formData,
       });
 
-      const data = await response.json().catch(() => null);
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data?.message || "Erro ao importar backup");
       }
 
-      if (!data?.success) {
-        throw new Error(data?.message || "Erro ao importar backup");
-      }
+      showToast("success", "Backup restaurado com sucesso");
 
-      navigate(-1);
+      setTimeout(() => {
+        navigate(-1);
+      }, 800);
     } catch (error) {
-      console.error(error);
-      alert(error.message);
+      showToast("error", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -80,49 +90,60 @@ export default function BackupPage() {
 
   return (
     <div className="backupPage">
-      <div className="backupHeader">
-        <button onClick={() => navigate(-1)}>
-          <i className="bi bi-arrow-left"></i> Voltar
-        </button>
 
+      {/* HEADER DESKTOP */}
+      <div className="backupHeader">
         <div>
           <h1>Backup do Sistema</h1>
-          <p>Importe ou exporte todos os dados do sistema.</p>
+          <p>Importação e exportação de dados do sistema</p>
+        </div>
+
+        <button onClick={() => navigate(-1)}>
+          Voltar
+        </button>
+      </div>
+
+      {/* CENTER CONTENT */}
+      <div className="backupContentWrapper">
+
+        <div className="backupGrid">
+
+          {/* EXPORT */}
+          <div className="backupCard">
+            <h2>Exportar Dados</h2>
+            <p>Gera um ficheiro completo do sistema.</p>
+
+            <button onClick={getBackup} disabled={isLoading}>
+              Exportar Backup
+            </button>
+          </div>
+
+          {/* IMPORT */}
+          <form className="backupCard" onSubmit={importBackup}>
+            <h2>Importar Dados</h2>
+            <p>Restaurar backup existente.</p>
+
+            <input type="file" name="backup" accept=".json" />
+
+            <button type="submit" disabled={isLoading}>
+              Importar Backup
+            </button>
+          </form>
+
         </div>
       </div>
 
-      <div className="backupGrid">
-        {/* EXPORT */}
-        <div className="card backupCard">
-          <h2>Exportar Dados</h2>
-          <button
-            onClick={getBackup}
-            disabled={isLoading}
-            className="btn-primary"
-          >
-            Exportar Backup
-          </button>
-        </div>
-
-        {/* IMPORT */}
-        <form className="card backupCard" onSubmit={importBackup}>
-          <h2>Importar Dados</h2>
-
-          <input type="file" name="backup" accept=".json" />
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="btn-primary"
-          >
-            Importar Backup
-          </button>
-        </form>
-      </div>
-
+      {/* LOADING */}
       {isLoading && (
         <div className="alertModal">
           <MiniSpinner />
+        </div>
+      )}
+
+      {/* TOAST */}
+      {toast && (
+        <div className={`toast ${toast.type}`}>
+          {toast.message}
         </div>
       )}
     </div>

@@ -120,7 +120,7 @@ export default function SearchBoxForm({ isOpen, checkedValue, onClose, data = []
             )}
           </ul>
         </div>
-      </Dialog>
+      </Dialog >
 
       <FormClienteDialog
         isOpen={openFormImportador}

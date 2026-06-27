@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import logoDefault from "../../assets/img/logo.jpg";
 import { systemApi } from "../../api/System.api";
 import { appEnv } from "../../env/appEnv";
+import { numeroPorExtenso } from "../../utils/numberToExtenso";
 
 export default function SheetCrf({ data, visible = true }) {
   if (!data) return null;
@@ -133,7 +134,7 @@ export default function SheetCrf({ data, visible = true }) {
           src={logo || logoDefault}
           alt="Logo"
           crossOrigin="anonymous"
-          style={{ height: 70, width: 90, objectFit: "contain" }}
+          style={{ height: 70, width: 90, objectFit: "contain", borderRadius: 8 }}
         />
         <div style={{ flex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
           <div style={{ lineHeight: 1.25, fontSize: 10 }}>
@@ -158,7 +159,7 @@ export default function SheetCrf({ data, visible = true }) {
             </div>
           </div>
           <div className="right" style={{ minWidth: 180, lineHeight: 1.22, fontSize: 10 }}>
-            <div className="bold" style={{ fontSize: 12 }}><small>CRF</small></div>
+            <div className="bold" style={{ fontSize: 12 }}><small>Nº do Processo</small></div>
             <div>
               <small className="bold" style={{ fontSize: 12 }}>Nº:</small> <small style={{ fontSize: 10 }}>{data.numero_crf || ""}</small>
             </div>
@@ -192,10 +193,6 @@ export default function SheetCrf({ data, visible = true }) {
             </p>
           </div>
         </div>
-
-        {
-          console.log(data)
-        }
 
         <div className="row">
           <div className="col">
@@ -337,7 +334,7 @@ export default function SheetCrf({ data, visible = true }) {
 
           <tr className="bold">
             <td colSpan="2">TOTAL POR EXTENSO</td>
-            <td className="right">{data?.total_por_extenso}</td>
+            <td className="right">{data?.total_por_extenso || numeroPorExtenso(totals?.totalGeral)}</td>
           </tr>
         </tbody>
       </table>

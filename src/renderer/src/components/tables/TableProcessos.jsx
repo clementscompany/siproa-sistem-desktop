@@ -72,12 +72,16 @@ export default function TableProcessos({ onViewDetails, onEdit, reload }) {
               <th className="actions">Ações</th>
             </tr>
           </thead>
+
           <tbody>
             {data.map((item) => (
               <tr key={item.id}>
                 <td>{item.id}</td>
                 <td className="truncate">{item.doc_transporte || "—"}</td>
                 <td className="truncate">{item.cliente_nome || "—"}</td>
+                {
+                  console.log(item)
+                }
                 <td>
                   <span className={`status ${(item.status || "aberta").toLowerCase()}`}>
                     {item.status || "aberta"}

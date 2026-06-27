@@ -16,6 +16,12 @@ import FormasPagamentoController from "./controllers/formas_pagamento/formas_pag
 import MeioTransporteController from "./controllers/meio_transporte/meio_transporte.controller.js";
 import RegimeController from "./controllers/regimes/regime.controller.js";
 import { upload, uploadAnexo } from "./middlewares/upload.js";
+import multer from "multer";
+import {
+  exportBackup,
+  importBackup,
+} from "./controllers/backup/backup.controller.js";
+const multerFile = multer({ storage: multer.memoryStorage() });
 
 const Route = express.Router();
 
@@ -33,6 +39,9 @@ Route.post("/setpassword", AdminController.setPasswordAdmin);
 Route.post("/loginadmin", AdminController.loginAdmin);
 Route.get("/dashboard/stats", dashboardController.getStats);
 
+/// Backup Routes
+Route.get("/backup/export", exportBackup);
+Route.post("/backup/import", multerFile.single("backup"), importBackup);
 // CRF Routes
 Route.get("/crf", CrfController.getAll);
 Route.get("/crf/:id", CrfController.getById);

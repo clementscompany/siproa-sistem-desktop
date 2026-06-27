@@ -608,7 +608,7 @@ export default function FormProcessos({ onClose, onSaved, processoId }) {
                 style={{ cursor: "pointer" }}
               />
             </div>
-            <div style={inputBoxStyle}>
+            {/* <div style={inputBoxStyle}>
               <label style={{ fontSize: "12px", fontWeight: 600, textTransform: "uppercase" }}>Detalhes Banco</label>
               <input
                 name="detalhes_banco"
@@ -618,7 +618,7 @@ export default function FormProcessos({ onClose, onSaved, processoId }) {
                 placeholder="Clique para selecionar..."
                 style={{ cursor: "pointer" }}
               />
-            </div>
+            </div> */}
             <div style={inputBoxStyle}></div>
           </div>
         </div>
@@ -703,7 +703,7 @@ export default function FormProcessos({ onClose, onSaved, processoId }) {
           isOpen={openClientSearch}
           onClose={() => setOpenClientSearch(false)}
           data={clients}
-          onSelect={handleSelectClient}
+          checkedValue={handleSelectClient}
           title="Selecionar Cliente"
         />
       )}
@@ -713,7 +713,7 @@ export default function FormProcessos({ onClose, onSaved, processoId }) {
           isOpen={openExportSearch}
           onClose={() => setOpenExportSearch(false)}
           data={clients}
-          onSelect={handleSelectExport}
+          checkedValue={handleSelectExport}
           title="Selecionar Exportador"
         />
       )}

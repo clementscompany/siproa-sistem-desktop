@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import "../../assets/main.css";
 import { systemApi } from "../../api/System.api";
 import { appEnv } from "../../env/appEnv";
+import { useNavigate } from "react-router-dom";
 
 export default function ModalSettings({ isOpen, onClose }) {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nomeEmpresa: "",
     nif: "",
@@ -197,6 +199,20 @@ export default function ModalSettings({ isOpen, onClose }) {
             </button>
             <button type="submit" disabled={loading} style={{ padding: '10px 20px', backgroundColor: 'var(--primary)', color: 'white', border: 'none', borderRadius: 4, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>
               {loading ? "Salvando..." : "Salvar Configurações"}
+            </button>
+
+            <button type="button" disabled={loading}
+              onClick={() => navigate('/backup')}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: 'var(--warning-button)',
+                color: 'var(--warning-text)',
+                border: 'none',
+                borderRadius: 4,
+                cursor: 'pointer',
+                opacity: loading ? 0.7 : 1
+              }}>
+              Backup
             </button>
           </div>
         </form>

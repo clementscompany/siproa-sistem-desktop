@@ -153,7 +153,9 @@ export default function ListMoradaExportador({ isOpen, onClose, onSelect }) {
             onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
           />
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "10px" }}>
-            <Button onClick={() => setOpenForm(false)}>Cancelar</Button>
+            <Button
+              color="error"
+              onClick={() => setOpenForm(false)}>Cancelar</Button>
             <Button variant="contained" color="primary" onClick={handleSave}>Salvar</Button>
           </div>
         </div>

@@ -10,6 +10,7 @@ import EditarCrf from './pages/crf/EditarCrf';
 import ClientesPage from './pages/importadores/Importadores';
 import ARQUIVOS from './pages/arquivos/ARQUIVOS';
 import Processos from './pages/processos/Processos';
+import BackupPage from './pages/backup';
 
 function App() {
   return (
@@ -18,7 +19,6 @@ function App() {
         <Routes>
           <Route path='/' element={<WellCome />} />
           <Route path='/settings' element={<SettingsPage />} />
-
           <Route path='/home' element={<Layout><HomePage /></Layout>} />
           <Route path='/crf' element={<Layout><CRF /></Layout>} />
           <Route path='/crf/nova' element={<Layout><NovaRequisicao /></Layout>} />
@@ -30,7 +30,7 @@ function App() {
           <Route path='/importadores/cadastrar' element={<Layout><ClientesPage /></Layout>} />
           <Route path='/arquivos' element={<Layout><ARQUIVOS /></Layout>} />
           <Route path='/processos' element={<Layout><Processos /></Layout>} />
-
+          <Route path='/backup' element={<BackupPage />} />
           <Route path='*' element={<Layout><HomePage /></Layout>} />
         </Routes>
       </HashRouter>

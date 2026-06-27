@@ -1,7 +1,3 @@
-Claro! Uma checklist deixa a documentação muito mais organizada e facilita acompanhar o progresso. Segue um modelo em **Markdown** usando caixas de seleção (`- [ ]`).
-
-# Checklist de Desenvolvimento do Sistema
-
 > **Status:** Em andamento
 
 ---

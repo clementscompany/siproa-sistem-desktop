@@ -3,6 +3,7 @@ import "../../assets/main.css";
 import { systemApi } from "../../api/System.api";
 import { appEnv } from "../../env/appEnv";
 import { useNavigate } from "react-router-dom";
+import ContasBancarias from "./ContasBancarias";
 
 export default function ModalSettings({ isOpen, onClose }) {
   const navigate = useNavigate();
@@ -119,7 +120,7 @@ export default function ModalSettings({ isOpen, onClose }) {
 
   return (
     <div className="modal-settings">
-      <div className="modalContent" style={{ maxHeight: "90vh", overflowY: "auto" }}>
+      <div className="modalContent" style={{ maxHeight: "90vh", overflowY: "auto", padding: 44 }}>
         <div className="headerModal">
           <span>Configuração do Sistema</span>
           <button onClick={onClose} type="button">fechar</button>
@@ -193,6 +194,7 @@ export default function ModalSettings({ isOpen, onClose }) {
             </div>
           </div>
 
+
           <div style={{ marginTop: 20, display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
             <button type="button" onClick={onClose} style={{ padding: '10px 20px', backgroundColor: '#eee', color: '#333', border: 'none', borderRadius: 4, cursor: 'pointer' }}>
               Cancelar
@@ -216,6 +218,9 @@ export default function ModalSettings({ isOpen, onClose }) {
             </button>
           </div>
         </form>
+        <div style={{ marginBottom: 20, marginTop: 20 }}>
+          <ContasBancarias />
+        </div>
       </div>
     </div>
   )

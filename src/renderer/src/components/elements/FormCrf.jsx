@@ -417,7 +417,7 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
         </div>
 
         <div style={inputBoxStyle}>
-          <label>CRF ou</label>
+          <label>Número do processo</label>
           <input name="crf_ou_f" value={data.crf_ou_f || ''} onChange={handleChange} />
         </div>
 

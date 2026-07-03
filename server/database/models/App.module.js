@@ -1,6 +1,23 @@
 import { DB } from "../db.js";
 
 class AppModule {
+  async getContasBancarias() {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = "SELECT contabancaria FROM config LIMIT 1";
+        DB.all(query, (err, data) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(data);
+          }
+        });
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getConfigApp() {
     try {
       return new Promise((resolve, reject) => {
@@ -127,7 +144,8 @@ class AppModule {
   async getLogoApp() {
     try {
       return new Promise((resolve, reject) => {
-        const query = "SELECT * FROM logo_app WHERE active = 1 ORDER BY id DESC LIMIT 1";
+        const query =
+          "SELECT * FROM logo_app WHERE active = 1 ORDER BY id DESC LIMIT 1";
         DB.get(query, (err, row) => {
           if (err) reject(err);
           else resolve(row);
@@ -143,16 +161,16 @@ class AppModule {
       return new Promise((resolve, reject) => {
         // First deactivate previous logos if any
         DB.run("UPDATE logo_app SET active = 0", (err) => {
-            if (err) return reject(err);
-            
-            const query = `
+          if (err) return reject(err);
+
+          const query = `
             INSERT INTO logo_app (imagem) VALUES (?)
             `;
-            
-            DB.run(query, [logoData.imagem], function(err) {
-                if (err) return reject(err);
-                resolve({ success: true, id: this.lastID });
-            });
+
+          DB.run(query, [logoData.imagem], function (err) {
+            if (err) return reject(err);
+            resolve({ success: true, id: this.lastID });
+          });
         });
       });
     } catch (error) {
@@ -173,6 +191,27 @@ class AppModule {
             return reject(err);
           } else {
             resolve({ affectedRows: this.changes });
+          }
+        });
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async saveContasBancarias(contas) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = `
+        UPDATE config
+        SET contabancaria = ?
+        WHERE id = 1
+      `;
+        DB.run(query, [JSON.stringify(contas)], function (err) {
+          if (err) {
+            return reject(err);
+          } else {
+            resolve({ success: true, changes: this.changes });
           }
         });
       });

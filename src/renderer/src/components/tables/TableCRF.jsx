@@ -69,9 +69,9 @@ export default function TableCRF({ limit = 0, onViewDetails, reload }) {
             ? "Pago"
             : item.active
               ? "Ativo"
-              : "Inativo"
+              : "Inativo",
+        numero_factura: item.crf_ou_f || "N/A",
       }));
-
       setData(limit ? formatted.slice(0, limit) : formatted);
     } catch (err) {
       console.error("Erro ao buscar CRFs:", err);

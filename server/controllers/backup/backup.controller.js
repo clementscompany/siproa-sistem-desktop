@@ -1,4 +1,3 @@
-import fs from "fs";
 import { DB } from "../../database/db.js";
 
 /* =========================

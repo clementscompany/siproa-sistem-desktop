@@ -454,6 +454,7 @@ export const CreateTable = () => {
       moeda_padrao TEXT,
       taxa_cambio VARCHAR(10) DEFAULT '1',
       unidade_padrao TEXT,
+      contabancaria JSON,
       tema TEXT,
       idioma TEXT,
       criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

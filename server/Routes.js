@@ -38,6 +38,10 @@ Route.post("/savelogo", upload.single("imagem"), AppController.saveLogo);
 Route.post("/setpassword", AdminController.setPasswordAdmin);
 Route.post("/loginadmin", AdminController.loginAdmin);
 Route.get("/dashboard/stats", dashboardController.getStats);
+// Contas Bancárias
+Route.get("/contas-bancarias", AppController.getContasBancarias);
+Route.post("/contas-bancarias", AppController.saveContasBancarias);
+Route.delete("/contas-bancarias/:id", AppController.deleteContaBancaria);
 
 /// Backup Routes
 Route.get("/backup/export", exportBackup);

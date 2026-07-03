@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./settings.css";
 import Alert from "../Alert/Alert";
 import { systemApi } from "../../api/System.api";
@@ -8,7 +8,11 @@ export default function Settings() {
   const [step, setStep] = useState(1);
   const [data, setData] = useState({});
   const [errors, setErrors] = useState({});
-  const [alertMessage, setAlertMessage] = useState({ open: false, message: "", status: "", title: "" })
+  const [alertMessage, setAlertMessage] = useState({ open: false, message: "", status: "", title: "" });
+  const [backupModalOpen, setBackupModalOpen] = useState(false);
+  const [backupFile, setBackupFile] = useState(null);
+  const [backupLoading, setBackupLoading] = useState(false);
+  const fileInputRef = useRef(null);
   const Api = new systemApi();
   const nav = useNavigate();
   const nextStep = () => {
@@ -91,8 +95,78 @@ export default function Settings() {
       status: "",
       title: ""
     });
+  };
 
-  }
+  const handleExportBackup = async () => {
+    try {
+      setBackupLoading(true);
+      await Api.exportBackup();
+      setAlertMessage({
+        open: true,
+        message: "Backup exportado com sucesso!",
+        status: "success",
+        title: "Sucesso!"
+      });
+    } catch (error) {
+      setAlertMessage({
+        open: true,
+        message: "Erro ao exportar backup",
+        status: "erro",
+        title: "Erro!"
+      });
+    } finally {
+      setBackupLoading(false);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setBackupFile(file);
+    }
+  };
+
+  const handleImportBackup = async () => {
+    if (!backupFile) {
+      setAlertMessage({
+        open: true,
+        message: "Selecione um arquivo de backup",
+        status: "erro",
+        title: "Aviso!"
+      });
+      return;
+    }
+
+    try {
+      setBackupLoading(true);
+      await Api.importBackup(backupFile);
+      setAlertMessage({
+        open: true,
+        message: "Backup importado com sucesso!",
+        status: "success",
+        title: "Sucesso!"
+      });
+      setBackupModalOpen(false);
+      setBackupFile(null);
+
+      setTimeout(() => {
+        nav("/");
+      }, 2000)
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error) {
+      setAlertMessage({
+        open: true,
+        message: "Erro ao importar backup",
+        status: "erro",
+        title: "Erro!"
+      });
+    } finally {
+      setBackupLoading(false);
+    }
+  };
 
   return (
     <div className="settingsPage">
@@ -311,11 +385,90 @@ export default function Settings() {
 
         {/* BOTÕES DE NAVEGAÇÃO */}
         <div className="navButtons">
+          <button
+            onClick={() => setBackupModalOpen(true)}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "var(--warning-button)",
+              color: "var(--warning-text)",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer"
+            }}
+          >
+            Iimportar Backup
+          </button>
+
           {step > 1 && <button onClick={prevStep}>Voltar</button>}
           {step < 3 && <button className="btn-primary" onClick={nextStep}>Avançar</button>}
           {step === 3 && <button className="btn-primary" onClick={handleSubmit}>Salvar Configurações</button>}
         </div>
       </div>
+
+      {/* MODAL DE BACKUP */}
+      {backupModalOpen && (
+        <div className="modal-settings">
+          <div className="modalContent">
+            <div className="headerModal">
+              <span>Backup do Sistema</span>
+              <button onClick={() => setBackupModalOpen(false)} type="button">fechar</button>
+            </div>
+
+            <div style={{ marginTop: "20px", padding: 12 }}>
+
+              {/* IMPORTAR BACKUP */}
+              <div>
+                <h4 style={{ marginBottom: "10px" }}>Importar Backup</h4>
+                <p style={{ color: "#666", marginBottom: "15px", fontSize: "14px" }}>
+                  Selecione um arquivo JSON de backup para restaurar os dados.
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".json"
+                  onChange={handleFileChange}
+                  style={{ marginBottom: "15px" }}
+                />
+                {backupFile && (
+                  <p style={{ color: "#28a745", marginBottom: "15px", fontSize: "14px" }}>
+                    Arquivo selecionado: {backupFile.name}
+                  </p>
+                )}
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button
+                    onClick={() => setBackupModalOpen(false)}
+                    style={{
+                      padding: "10px 20px",
+                      backgroundColor: "#eee",
+                      color: "#333",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleImportBackup}
+                    disabled={backupLoading || !backupFile}
+                    style={{
+                      padding: "10px 20px",
+                      backgroundColor: "#28a745",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: backupLoading || !backupFile ? "not-allowed" : "pointer",
+                      opacity: backupLoading || !backupFile ? 0.7 : 1
+                    }}
+                  >
+                    {backupLoading ? "Importando..." : "Importar Backup"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {alertMessage.open === true && <Alert message={alertMessage.message} title={alertMessage.title}
         onClose={hendleCloseBodal}

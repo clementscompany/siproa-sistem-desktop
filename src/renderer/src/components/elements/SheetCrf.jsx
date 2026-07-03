@@ -7,9 +7,14 @@ import { numeroPorExtenso } from "../../utils/numberToExtenso";
 export default function SheetCrf({ data, visible = true }) {
   if (!data) return null;
 
+
+  console.log(data);
+
+
   const [logo, setLogo] = useState(logoDefault);
   const [company, setCompany] = useState(null);
   const [headerReady, setHeaderReady] = useState(false);
+  const [contasBancarias, setContasBancarias] = useState([]);
 
   const format = (v) =>
     (parseFloat(v) || 0).toLocaleString("pt-AO", {
@@ -23,7 +28,11 @@ export default function SheetCrf({ data, visible = true }) {
         setHeaderReady(false);
         const API = new systemApi();
 
-        const [logoResponse, configResponse] = await Promise.all([API.getLogo(), API.getConfigApp()]);
+        const [logoResponse, configResponse, contasResponse] = await Promise.all([
+          API.getLogo(),
+          API.getConfigApp(),
+          fetch(`${appEnv.server}/contas-bancarias`).then(r => r.json())
+        ]);
 
         const logoResult = logoResponse?.result;
         if (logoResult?.imagem) {
@@ -49,6 +58,7 @@ export default function SheetCrf({ data, visible = true }) {
           setCompany(null);
         }
 
+        setContasBancarias(contasResponse?.result || []);
         setHeaderReady(true);
       } catch (error) {
         console.error("Erro ao carregar dados do cabeçalho:", error);
@@ -104,7 +114,7 @@ export default function SheetCrf({ data, visible = true }) {
     >
       <style>{`
         @media print {
-          @page { size: A4; margin: 10mm; }
+          @page { size: A4; margin: 8mm; }
           body { visibility: hidden; }
           .sheet-container, .sheet-container * { visibility: visible; }
           .sheet-container {
@@ -113,31 +123,31 @@ export default function SheetCrf({ data, visible = true }) {
             left: 0;
             width: 100%;
             font-family: Arial, sans-serif;
-            font-size: 11px;
+            font-size: 10px;
             color: #000;
           }
         }
 
         .row { display: flex; justify-content: space-between; }
-        .col { width: 48%; font-size:10pt; }
-        .box { padding: 6px; margin-bottom: 12px; }
+        .col { width: 48%; font-size: 9pt; }
+        .box { padding: 5px; margin-bottom: 10px; }
         .center { text-align: center; }
         .right { text-align: right; }
         .bold { font-weight: bold; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 6px; }
-        th, td { border: 1px solid #000; padding: 4px; font-size: 11px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        th, td { border: 1px solid #000; padding: 4px; font-size: 10px; }
       `}</style>
 
-      <div className="row" style={{ alignItems: "center", marginBottom: 8, gap: 16 }}>
+      <div className="row" style={{ alignItems: "center", marginBottom: 6, gap: 14 }}>
         <img
           src={logo || logoDefault}
           alt="Logo"
           crossOrigin="anonymous"
-          style={{ height: 70, width: 90, objectFit: "contain", borderRadius: 8 }}
+          style={{ height: 62, width: 80, objectFit: "contain", borderRadius: 6 }}
         />
-        <div style={{ flex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
-          <div style={{ lineHeight: 1.25, fontSize: 10 }}>
+        <div style={{ flex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 14 }}>
+          <div style={{ lineHeight: 1.2, fontSize: 9.5 }}>
             <div className="bold">{company?.empresa_nome || ""}</div>
             {!!company?.empresa_nif && (
               <div>
@@ -145,7 +155,7 @@ export default function SheetCrf({ data, visible = true }) {
               </div>
             )}
             {!!company?.empresa_endereco && <div>{company.empresa_endereco}</div>}
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               {!!company?.empresa_telefone && (
                 <div>
                   <span className="bold">Tel:</span> {company.empresa_telefone}
@@ -158,11 +168,11 @@ export default function SheetCrf({ data, visible = true }) {
               )}
             </div>
           </div>
-          <div className="right" style={{ minWidth: 180, lineHeight: 1.22, fontSize: 10 }}>
-            <div className="bold" style={{ fontSize: 12 }}><small>Nº do Processo</small></div>
+          <div className="right" style={{ minWidth: 165, lineHeight: 1.2, fontSize: 9.5 }}>
             <div>
-              <small className="bold" style={{ fontSize: 12 }}>Nº:</small> <small style={{ fontSize: 10 }}>{data.numero_crf || ""}</small>
+              <small className="bold" style={{ fontSize: 11 }}>CRF Nº:</small> <small style={{ fontSize: 9.5 }}>{data.numero_crf || ""}</small>
             </div>
+            {/* <div className="bold" style={{ fontSize: 11 }}><small>Nº DO PROCESSO: {data.crf_ou_f || ""}</small></div> */}
           </div>
         </div>
       </div>
@@ -170,25 +180,25 @@ export default function SheetCrf({ data, visible = true }) {
       <div className="box">
         <div className="row" >
           <div className="col">
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>Cliente / Empresa</b> {data.cliente_nome || data.cliente || ""}
             </p>
           </div>
           <div className="col" >
-            <p>
-              <b>Req. de Fundo Nº</b> {data.numero_crf || ""}
+            <p style={{ margin: "3px 0" }}>
+              <b>Nº do processo</b> {data.crf_ou_f || ""}
             </p>
           </div>
         </div>
 
         <div className="row">
           <div className="col">
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>NIF da Empresa</b> {data.cliente_nif || data.nif || ""}
             </p>
           </div>
           <div className="col" >
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>Moeda</b> {data.moeda || ""}
             </p>
           </div>
@@ -196,12 +206,12 @@ export default function SheetCrf({ data, visible = true }) {
 
         <div className="row">
           <div className="col">
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>Endereço</b> {data.cliente_endereco || ""}
             </p>
           </div>
           <div className="col" >
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>Câmbio</b> {data.cambio || ""}
             </p>
           </div>
@@ -209,12 +219,12 @@ export default function SheetCrf({ data, visible = true }) {
 
         <div className="row">
           <div className="col">
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>D.U Nº</b> {data.du_numero || ""}
             </p>
           </div>
           <div className="col" >
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>Valor Aduaneiro</b> {format(data.valor_aduaneiro)}
             </p>
           </div>
@@ -222,12 +232,12 @@ export default function SheetCrf({ data, visible = true }) {
 
         <div className="row">
           <div className="col">
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>B.L Nº</b> {data.bl_numero || ""}
             </p>
           </div>
           <div className="col" >
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>Via</b> {data.via || ""}
             </p>
           </div>
@@ -235,12 +245,12 @@ export default function SheetCrf({ data, visible = true }) {
 
         <div className="row">
           <div className="col">
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>FOB</b> {format(data.fob)}
             </p>
           </div>
           <div className="col" >
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>País de Origem</b> {data.pais_nome || ""}
             </p>
           </div>
@@ -248,12 +258,12 @@ export default function SheetCrf({ data, visible = true }) {
 
         <div className="row">
           <div className="col">
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>Frete</b> {format(data.frete)}
             </p>
           </div>
           <div className="col" >
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>Factura Nº</b> {data.crf_ou_f || ""}
             </p>
           </div>
@@ -261,12 +271,12 @@ export default function SheetCrf({ data, visible = true }) {
 
         <div className="row">
           <div className="col">
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>Seguro</b> {format(data.seguro)}
             </p>
           </div>
           <div className="col" >
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>C/Marca Nº</b> {data.c_marca || ""}
             </p>
           </div>
@@ -274,20 +284,20 @@ export default function SheetCrf({ data, visible = true }) {
 
         <div className="row">
           <div className="col">
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>CIF</b> {format(data.cif)}
             </p>
           </div>
           <div className="col" >
-            <p>
+            <p style={{ margin: "3px 0" }}>
               <b>Data de Entrada</b> {data.data_entrada || ""}
             </p>
           </div>
         </div>
 
-        <div style={{ marginTop: 8 }}>
-          <p className="bold">Designação da Mercadoria</p>
-          <div style={{ border: "1px dashed #000", padding: 12, minHeight: 30, marginTop: 6 }}>
+        <div style={{ marginTop: 6 }}>
+          <p className="bold" style={{ margin: "3px 0" }}>Designação da Mercadoria</p>
+          <div style={{ border: "1px dashed #000", padding: 10, minHeight: 28, marginTop: 5, fontSize: "9pt" }}>
             {data.designacao || ""}
           </div>
         </div>
@@ -339,9 +349,22 @@ export default function SheetCrf({ data, visible = true }) {
         </tbody>
       </table>
 
+      {contasBancarias.length > 0 && (
+        <div style={{ marginTop: 14 }}>
+          <p className="bold" style={{ margin: "5px 0", fontSize: "10pt", textTransform: "uppercase" }}>Coordenadas Bancárias:</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 5 }}>
+            {contasBancarias.slice(0, 4).map((conta, index) => (
+              <div key={conta.id || index} style={{ fontSize: "9.5pt" }}>
+                <b>{conta?.banco || conta?.nome}:</b> {conta?.iban}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="center" style={{ marginTop: 22 }}>
-        <b>A DIREÇÃO</b>
-        <div style={{ borderTop: "1px solid #000", width: 200, margin: "8px auto 0" }} />
+        <b style={{ fontSize: "10pt" }}>A DIREÇÃO</b>
+        <div style={{ borderTop: "1px solid #000", width: 180, margin: "8px auto 0" }} />
       </div>
     </div>
   );

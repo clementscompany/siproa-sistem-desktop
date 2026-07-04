@@ -77,10 +77,52 @@ const backupStorage = multer.diskStorage({
 /* IMAGENS */
 const imageFilter = (req, file, cb) => {
   const allowedTypes = [
+    // JPEG
     "image/jpeg",
+    "image/pjpeg",
+
+    // PNG
     "image/png",
+
+    // GIF
     "image/gif",
+
+    // WebP
     "image/webp",
+
+    // AVIF
+    "image/avif",
+
+    // HEIF / HEIC
+    "image/heif",
+    "image/heic",
+
+    // SVG
+    "image/svg+xml",
+
+    // BMP
+    "image/bmp",
+    "image/x-ms-bmp",
+
+    // TIFF
+    "image/tiff",
+
+    // ICO
+    "image/vnd.microsoft.icon",
+    "image/x-icon",
+
+    // JPEG 2000
+    "image/jp2",
+    "image/jpx",
+    "image/jpm",
+
+    // APNG
+    "image/apng",
+
+    // JXL (JPEG XL)
+    "image/jxl",
+
+    // JSON (caso realmente queira permitir)
     "application/json",
   ];
 
@@ -112,7 +154,7 @@ const backupFilter = (req, file, cb) => {
 /* IMAGEM (LOGO / GERAL) */
 export const upload = multer({
   storage: imageStorage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter: imageFilter,
 });
 

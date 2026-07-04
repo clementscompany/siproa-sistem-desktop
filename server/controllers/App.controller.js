@@ -87,7 +87,7 @@ class AppController {
       }
 
       // Constrói a URL da imagem
-      const imageUrl = `/uploads/${req.file.filename}`;
+      const imageUrl = `/uploads/images/${req.file.filename}`;
 
       const result = await AppModule.saveLogoApp({ imagem: imageUrl });
 

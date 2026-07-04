@@ -264,7 +264,7 @@ export default function SheetCrf({ data, visible = true }) {
           </div>
           <div className="col" >
             <p style={{ margin: "3px 0" }}>
-              <b>Factura Nº</b> {data.crf_ou_f || ""}
+              <b>Factura Nº</b> {data.factura || ""}
             </p>
           </div>
         </div>

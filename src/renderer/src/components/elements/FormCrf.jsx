@@ -423,6 +423,8 @@ export default function FormDataCRF({ onClose, onSaved, crfId }) {
 
         <div style={inputBoxStyle}>
           <label>Factura Nº</label>
+
+          {console.log(data)}
           <input name="factura" value={data.factura || ''} onChange={handleChange} />
         </div>
 

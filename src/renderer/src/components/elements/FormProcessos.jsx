@@ -17,6 +17,80 @@ import ListMoradaExportador from "./ListMoradaExportador";
 const processosApi = new ProcessosApi();
 const importadoresApi = new ImportadoresApi();
 
+// Opções estáticas para os campos
+const regimeOptions = [
+  { value: '11', label: '11 — Importação Definitiva' },
+  { value: '12', label: '12 — Importação Simplificada' },
+  { value: '13', label: '13 — Importação Incompleta' },
+  { value: '14', label: '14 — Importação Temporária' },
+  { value: '141', label: '141 — Importação Temporária' },
+  { value: '142', label: '142 — Importação Temporária' },
+  { value: '143', label: '143 — Importação Temporária' },
+  { value: '15', label: '15 — Re-Importação' },
+  { value: '151', label: '151 — Re-Importação' },
+  { value: '152', label: '152 — Re-Importação' },
+  { value: '21', label: '21 — Exportação Definitiva' },
+  { value: '23', label: '23 — Exportação Incompleta' },
+  { value: '24', label: '24 — Exportação Temporária' },
+  { value: '25', label: '25 — Re-Exportação' },
+  { value: '41', label: '41 — Armazém Afiançado' },
+  { value: '51', label: '51 — Trânsito Doméstico' },
+  { value: '61', label: '61 — Trânsito Internacional' }
+];
+
+const volumeOptions = [
+  { value: 'B', label: 'B — Carga a Granel' },
+  { value: 'F', label: 'F — Contentor Carregado Cheio' },
+  { value: 'G', label: 'G — Carga Geral' },
+  { value: 'L', label: 'L — Contentor Carregado Não Cheio' },
+  { value: 'N', label: 'N — Números (por unidade)' }
+];
+
+const transporteOptions = [
+  { value: '11', label: '11 — Marítimo' },
+  { value: '12', label: '12 — Ferroviário' },
+  { value: '13', label: '13 — Rodoviário' },
+  { value: '14', label: '14 — Aéreo' },
+  { value: '141', label: '141 — Postal' },
+  { value: '142', label: '142 — Multimodal' },
+  { value: '143', label: '143 — Condutas de Transportação Fixa' },
+  { value: '15', label: '15 — Transporte Fluvial' },
+  { value: '151', label: '151 — Modo de Transporte Não Aplicável' }
+];
+
+const pagamentoOptions = [
+  { value: 'CA', label: 'CA — Pagamento por Adiantamento' },
+  { value: 'CD', label: 'CD — Pagamento Contra Reembolso' },
+  { value: 'LC', label: 'LC — Carta de Crédito' },
+  { value: 'NR', label: 'NR — Não Reembolsável' },
+  { value: 'OA', label: 'OA — Carta Aberta' },
+  { value: 'PP', label: 'PP — Pré-Pagamento' },
+  { value: 'SD', label: 'SD — Pagamento à Vista' },
+  { value: 'TT', label: 'TT — Transferência Telegráfica' }
+];
+
+const bancoOptions = [
+  { value: '0001', label: '0001 — BPC — Banco de Poupança e Crédito' },
+  { value: '0004', label: '0004 — BCGA — Banco Caixa Geral Angola' },
+  { value: '0005', label: '0005 — BCI — Banco de Comércio e Indústria' },
+  { value: '0006', label: '0006 — BFA — Banco de Fomento Angola' },
+  { value: '0040', label: '0040 — BAI — Banco Angolano de Investimentos' },
+  { value: '0043', label: '0043 — BNI — Banco de Negócios Internacional' },
+  { value: '0044', label: '0044 — BCA — Banco Comercial Angolano' },
+  { value: '0045', label: '0045 — SOL — Banco Sol' },
+  { value: '0047', label: '0047 — KEVE — Banco Keve' },
+  { value: '0051', label: '0051 — BIC — Banco BIC' },
+  { value: '0052', label: '0052 — BMA — Banco Millennium Atlântico' },
+  { value: '0054', label: '0054 — SBA — Standard Bank Angola' },
+  { value: '0055', label: '0055 — Banco VTB África' },
+  { value: '0058', label: '0058 — Banco Económico' },
+  { value: '0061', label: '0061 — Standard Chartered Bank Angola' },
+  { value: '0063', label: '0063 — Banco Finibanco Angola' },
+  { value: '0066', label: '0066 — BIR — Banco de Investimento Rural' },
+  { value: '0069', label: '0069 — BCS — Banco de Crédito do Sul' },
+  { value: '0070', label: '0070 — BMF — Banco Micro Finanças' }
+];
+
 export default function FormProcessos({ onClose, onSaved, processoId }) {
   const [clients, setClients] = useState([]);
   const [openClientSearch, setOpenClientSearch] = useState(false);
@@ -184,6 +258,9 @@ export default function FormProcessos({ onClose, onSaved, processoId }) {
       ...p,
       importador_id: client.id,
       cliente_nome: client.nome,
+      importador_nif: client.nif || '',
+      importador_morada: client.morada || '',
+      importador_ine: client.codigo || ''
     }));
     setOpenClientSearch(false);
   };
@@ -240,9 +317,9 @@ export default function FormProcessos({ onClose, onSaved, processoId }) {
     setData((p) => ({
       ...p,
       exportador_nome: client.nome,
-      exportador_cod: client.codigo || "",
-      exportador_ine: client.ine || "",
-      exportador_morada: client.morada || "",
+      exportador_cod: client.codigo || '',
+      exportador_ine: client.codigo || '',
+      exportador_morada: client.morada || '',
     }));
     setOpenExportSearch(false);
   };
@@ -386,14 +463,12 @@ export default function FormProcessos({ onClose, onSaved, processoId }) {
             </div>
             <div style={inputBoxStyle}>
               <label style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase" }}>Cod. Regime</label>
-              <input
-                name="cod_regime"
-                value={data.cod_regime}
-                onClick={() => setOpenRegimeSearch(true)}
-                readOnly
-                placeholder="Clique para selecionar..."
-                style={{ cursor: "pointer" }}
-              />
+              <select name="cod_regime" value={data.cod_regime} onChange={handleChange}>
+                <option value="">Selecione</option>
+                {regimeOptions.map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
             </div>
             <div style={inputBoxStyle}>
               <label style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase" }}>Moeda</label>
@@ -444,7 +519,12 @@ export default function FormProcessos({ onClose, onSaved, processoId }) {
             <div style={inputBoxStyle}><label style={{ fontSize: "12px", fontWeight: 600, textTransform: "uppercase" }}>Nº Volume</label><input type="number" name="numero_volume" value={data.numero_volume} onChange={handleChange} /></div>
             <div style={inputBoxStyle}>
               <label style={{ fontSize: "12px", fontWeight: 600, textTransform: "uppercase" }}>Cod. Volume</label>
-              <select name="cod_volume" value={data.cod_volume} onChange={handleChange}><option value="">Selecione</option></select>
+              <select name="cod_volume" value={data.cod_volume} onChange={handleChange}>
+                <option value="">Selecione</option>
+                {volumeOptions.map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
             </div>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
@@ -541,14 +621,12 @@ export default function FormProcessos({ onClose, onSaved, processoId }) {
           <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
             <div style={inputBoxStyle}>
               <label style={{ fontSize: "12px", fontWeight: 600, textTransform: "uppercase" }}>Meio transporte</label>
-              <input
-                name="meio_transporte"
-                value={data.meio_transporte}
-                onClick={() => setOpenTransportSearch(true)}
-                readOnly
-                placeholder="Clique para selecionar..."
-                style={{ cursor: "pointer" }}
-              />
+              <select name="meio_transporte" value={data.meio_transporte} onChange={handleChange}>
+                <option value="">Selecione</option>
+                {transporteOptions.map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
             </div>
             <div style={inputBoxStyle}>
               <label style={{ fontSize: "12px", fontWeight: 600, textTransform: "uppercase" }}>Nacionalidade</label>
@@ -599,26 +677,22 @@ export default function FormProcessos({ onClose, onSaved, processoId }) {
           <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", marginTop: "16px" }}>
             <div style={inputBoxStyle}>
               <label style={{ fontSize: "12px", fontWeight: 600, textTransform: "uppercase" }}>Forma Pagamento</label>
-              <input
-                name="forma_pagamento"
-                value={data.forma_pagamento}
-                onClick={() => setOpenPaymentSearch(true)}
-                readOnly
-                placeholder="Clique para selecionar..."
-                style={{ cursor: "pointer" }}
-              />
+              <select name="forma_pagamento" value={data.forma_pagamento} onChange={handleChange}>
+                <option value="">Selecione</option>
+                {pagamentoOptions.map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
             </div>
-            {/* <div style={inputBoxStyle}>
+            <div style={inputBoxStyle}>
               <label style={{ fontSize: "12px", fontWeight: 600, textTransform: "uppercase" }}>Detalhes Banco</label>
-              <input
-                name="detalhes_banco"
-                value={data.detalhes_banco}
-                onClick={() => setOpenBankSearch(true)}
-                readOnly
-                placeholder="Clique para selecionar..."
-                style={{ cursor: "pointer" }}
-              />
-            </div> */}
+              <select name="detalhes_banco" value={data.detalhes_banco} onChange={handleChange}>
+                <option value="">Selecione</option>
+                {bancoOptions.map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
             <div style={inputBoxStyle}></div>
           </div>
         </div>

@@ -386,8 +386,10 @@ export const CreateTable = () => {
         guia_contratacao TEXT,
         numero_lote TEXT,
         documento_em_falta TEXT,
+        descricao_da_mercadoia TEXT,
         status TEXT DEFAULT 'PENDENTE',
         emprestado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        numero_de_certificado TEXT,
         devolucao_prevista_em TEXT,
         prazo_dias INTEGER,
         devolvido_em TEXT,
@@ -401,11 +403,75 @@ export const CreateTable = () => {
     DB.run("ALTER TABLE arquivos ADD COLUMN numero_du TEXT", () => {});
     DB.run("ALTER TABLE arquivos ADD COLUMN emprestado_em TEXT", () => {});
     DB.run(
+      "ALTER TABLE arquivos ADD COLUMN descricao_da_mercadoia TEXT",
+      () => {},
+    );
+    DB.run(
+      "ALTER TABLE arquivos ADD COLUMN numero_de_certificado TEXT",
+      () => {},
+    );
+    DB.run(
       "ALTER TABLE arquivos ADD COLUMN devolucao_prevista_em TEXT",
       () => {},
     );
     DB.run("ALTER TABLE arquivos ADD COLUMN prazo_dias INTEGER", () => {});
     DB.run("ALTER TABLE arquivos ADD COLUMN devolvido_em TEXT", () => {});
+
+    // -------------------------------
+    // ALTERAÇÕES NA TABELA CONTAS
+    // -------------------------------
+    DB.run("ALTER TABLE contas ADD COLUMN conta_numero TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN contablista TEXT", () => {});
+    DB.run(
+      "ALTER TABLE contas ADD COLUMN quantidade_adicoes INTEGER",
+      () => {},
+    );
+    DB.run("ALTER TABLE contas ADD COLUMN cambio_usd TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN cod_regime TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN cambio_moeda TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN estancia TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN peso_bruto REAL DEFAULT 0", () => {});
+    DB.run(
+      "ALTER TABLE contas ADD COLUMN fiscalizacao_porto REAL DEFAULT 0",
+      () => {},
+    );
+    DB.run(
+      "ALTER TABLE contas ADD COLUMN peso_liquido REAL DEFAULT 0",
+      () => {},
+    );
+    DB.run("ALTER TABLE contas ADD COLUMN aeroporto REAL DEFAULT 0", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN soma REAL DEFAULT 0", () => {});
+    DB.run(
+      "ALTER TABLE contas ADD COLUMN numero_volume INTEGER DEFAULT 0",
+      () => {},
+    );
+    DB.run("ALTER TABLE contas ADD COLUMN cod_volume TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN seguro REAL DEFAULT 0", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN importador_nif TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN importador_morada TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN importador_ine TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN exportador_nome TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN exportador_cod TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN exportador_ine TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN exportador_morada TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN meio_transporte TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN nacionalidade TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN data_chegada DATE", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN porto_entrada_saida TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN posto_fronteirico TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN garantia_nr TEXT", () => {});
+    DB.run(
+      "ALTER TABLE contas ADD COLUMN montante_garantia REAL DEFAULT 0",
+      () => {},
+    );
+    DB.run("ALTER TABLE contas ADD COLUMN metodo_avaliacao TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN forma_pagamento TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN detalhes_banco TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN descricao TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN local_embarque TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN pais_procedencia TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN pais_destino TEXT", () => {});
+    DB.run("ALTER TABLE contas ADD COLUMN data_du DATE", () => {});
 
     DB.run(
       `CREATE INDEX IF NOT EXISTS idx_arquivos_cliente ON arquivos(cliente_id);`,

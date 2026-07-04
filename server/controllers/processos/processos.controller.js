@@ -22,10 +22,13 @@ class ProcessosController {
 
   async create(req, res) {
     try {
+      console.log('Dados recebidos para criar processo:', req.body);
       const result = await ProcessosModule.create(req.body);
+      console.log('Processo criado com sucesso:', result);
       res.status(201).json(result);
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      console.error('Erro ao criar processo:', err);
+      res.status(500).json({ error: err.message, stack: err.stack });
     }
   }
 

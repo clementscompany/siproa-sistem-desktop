@@ -22,16 +22,16 @@ Server.use(
   }),
 );
 
-
-
-// Configurar pasta estática para uploads
+// Diretório de uploads
 const uploadDir = process.env.SIPROA_UPLOAD_DIR
   ? path.resolve(process.env.SIPROA_UPLOAD_DIR)
-  : path.resolve("/uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+  : path.join(__dirname, "uploads");
 
+// Garantir que a estrutura exista
+fs.mkdirSync(uploadDir, { recursive: true });
+fs.mkdirSync(path.join(uploadDir, "images"), { recursive: true });
+
+// Servir arquivos estáticos
 Server.use(
   "/uploads",
   express.static(uploadDir, {
@@ -45,5 +45,7 @@ Server.use(
   }),
 );
 
+// Rotas
 Server.use(Route);
-export { Server };
+
+export { Server, uploadDir };
